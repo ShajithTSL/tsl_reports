@@ -1,0 +1,123 @@
+{
+ "actions": [],
+ "creation": "2026-10-27 10:00:00.000000",
+ "modified": "2026-10-28 14:00:00.000000",
+ "owner": "Administrator",
+ "modified_by": "Administrator",
+ "doctype": "DocType",
+ "name": "Technical Report Block",
+ "module": "TSL Reports",
+ "engine": "InnoDB",
+ "istable": 1,
+ "editable_grid": 1,
+ "field_order": [
+  "block_type",
+  "title",
+  "content",
+  "expected",
+  "col4",
+  "value",
+  "status",
+  "image",
+  "columns",
+  "image_height",
+  "col_labels",
+  "no_number"
+ ],
+ "fields": [
+  {
+   "fieldname": "block_type",
+   "fieldtype": "Select",
+   "label": "Block Type",
+   "options": "Heading\nSub Heading\nText\nKey-Value\nTable Row\nChecklist Row\nTest Row\nImage\nPage Break",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2,
+   "default": "Text"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Small Text",
+   "label": "Title / Step / Test / Key / Caption",
+   "in_list_view": 1,
+   "columns": 3,
+   "depends_on": "eval:doc.block_type!=\"Page Break\" && doc.block_type!=\"Text\"",
+   "description": "Heading text, checklist step, test name, key, or image caption"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Content",
+   "depends_on": "eval:doc.block_type==\"Text\"",
+   "description": "Paragraphs and bullet lists. Use the editor's list buttons for bullets."
+  },
+  {
+   "fieldname": "expected",
+   "fieldtype": "Data",
+   "label": "Expected Result / Column 3",
+   "depends_on": "eval:[\"Test Row\",\"Table Row\"].includes(doc.block_type)"
+  },
+  {
+   "fieldname": "col4",
+   "fieldtype": "Data",
+   "label": "Column 4",
+   "depends_on": "eval:doc.block_type==\"Table Row\""
+  },
+  {
+   "fieldname": "value",
+   "fieldtype": "Small Text",
+   "label": "Value / Notes / Reading / Column 2",
+   "in_list_view": 1,
+   "columns": 3,
+   "depends_on": "eval:[\"Key-Value\",\"Table Row\",\"Checklist Row\",\"Test Row\"].includes(doc.block_type)"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nDone\nN/A\nPass\nFail",
+   "in_list_view": 1,
+   "columns": 1,
+   "depends_on": "eval:[\"Checklist Row\",\"Test Row\"].includes(doc.block_type)"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image",
+   "depends_on": "eval:doc.block_type==\"Image\""
+  },
+  {
+   "fieldname": "columns",
+   "fieldtype": "Select",
+   "label": "Images per Row",
+   "options": "\n1\n2\n3",
+   "depends_on": "eval:doc.block_type==\"Image\"",
+   "description": "Read from the first image of a group of consecutive images (default 2)"
+  },
+  {
+   "fieldname": "image_height",
+   "fieldtype": "Select",
+   "label": "Image Size",
+   "options": "\nSmall\nMedium\nLarge",
+   "depends_on": "eval:doc.block_type==\"Image\""
+  },
+  {
+   "fieldname": "col_labels",
+   "fieldtype": "Data",
+   "label": "Column Headers",
+   "depends_on": "eval:[\"Key-Value\",\"Table Row\",\"Checklist Row\",\"Test Row\"].includes(doc.block_type)",
+   "description": "Optional, comma separated. Set on the FIRST row of a table. For Table Row, the number of headers (2\u20134) sets the number of columns, e.g. Description, Model, Calibration Date"
+  },
+  {
+   "fieldname": "no_number",
+   "fieldtype": "Check",
+   "label": "Don't Number",
+   "depends_on": "eval:[\"Heading\",\"Sub Heading\"].includes(doc.block_type)"
+  }
+ ],
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "links": []
+}

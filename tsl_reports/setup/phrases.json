@@ -1,0 +1,602 @@
+[
+ {
+  "phrase_key": "c_received",
+  "phrase_type": "Complaint",
+  "text": "The unit was received at the workshop for detailed inspection, fault assessment and complete servicing.",
+  "sort_order": 10,
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "c_nopower",
+  "phrase_type": "Complaint",
+  "text": "The unit was reported as not powering up.",
+  "sort_order": 20
+ },
+ {
+  "phrase_key": "c_trip",
+  "phrase_type": "Complaint",
+  "text": "The unit was reported to trip with a fault during operation.",
+  "sort_order": 30
+ },
+ {
+  "phrase_key": "c_section",
+  "phrase_type": "Complaint",
+  "text": "A fault was identified in the {detail} section of the unit.",
+  "sort_order": 40
+ },
+ {
+  "phrase_key": "c_code",
+  "phrase_type": "Complaint",
+  "text": "The customer reported fault code {detail}.",
+  "sort_order": 50
+ },
+ {
+  "phrase_key": "c_nodetails",
+  "phrase_type": "Complaint",
+  "text": "No fault details were provided by the customer.",
+  "sort_order": 60
+ },
+ {
+  "phrase_key": "a_visual",
+  "phrase_type": "Assessment",
+  "text": "The unit was subjected to a detailed visual and electrical inspection to identify the source of the fault. The power section, passive components, PCB assemblies, solder joints and associated circuitry were inspected.",
+  "sort_order": 70,
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "a_dismantle",
+  "phrase_type": "Assessment",
+  "text": "The unit was dismantled for complete internal inspection. All dismantling activities were performed carefully without causing any additional damage to internal components or mechanical assemblies.",
+  "sort_order": 80
+ },
+ {
+  "phrase_key": "a_multi",
+  "phrase_type": "Assessment",
+  "text": "The units were inspected and the internal PCB assemblies and electronic components were examined to assess their general condition.",
+  "sort_order": 90
+ },
+ {
+  "phrase_key": "r_thermal",
+  "phrase_type": "Recommended Action",
+  "text": "Remove the old thermal compound and apply fresh heat sink paste on the IGBT power modules.",
+  "sort_order": 100,
+  "section": "Power Section",
+  "equipment_types": "VFD, Drive, Inverter",
+  "completion_step": "Thermal paste renewed on IGBT modules and heat sinks"
+ },
+ {
+  "phrase_key": "r_igbt",
+  "phrase_type": "Recommended Action",
+  "text": "Replace the faulty IGBT power module ({detail}).",
+  "sort_order": 110,
+  "section": "Power Section",
+  "equipment_types": "VFD, Drive, Inverter",
+  "completion_step": "Faulty IGBT power module replaced ({detail})"
+ },
+ {
+  "phrase_key": "r_power_service",
+  "phrase_type": "Recommended Action",
+  "text": "Carry out complete cleaning and servicing of the power section.",
+  "sort_order": 120,
+  "section": "Power Section",
+  "equipment_types": "VFD, Drive, Inverter",
+  "completion_step": "Power section cleaned and serviced"
+ },
+ {
+  "phrase_key": "r_passive",
+  "phrase_type": "Recommended Action",
+  "text": "Replace all weak and degraded passive components across the PCB assemblies.",
+  "sort_order": 130,
+  "section": "PCB Assemblies",
+  "default_checked": 1,
+  "completion_step": "Weak / degraded passive components replaced on PCB assemblies"
+ },
+ {
+  "phrase_key": "r_burnt",
+  "phrase_type": "Recommended Action",
+  "text": "Replace the burnt {detail} with an exact original / specification-matched component.",
+  "sort_order": 140,
+  "section": "PCB Assemblies",
+  "completion_step": "Burnt {detail} replaced with a specification-matched component"
+ },
+ {
+  "phrase_key": "r_interface",
+  "phrase_type": "Recommended Action",
+  "text": "Replace the burnt interface board with a new board.",
+  "sort_order": 150,
+  "section": "PCB Assemblies",
+  "equipment_types": "VFD, Drive, Inverter",
+  "completion_step": "Interface board replaced with a new board"
+ },
+ {
+  "phrase_key": "r_fanboard",
+  "phrase_type": "Recommended Action",
+  "text": "Repair the fan supply board and test the surrounding driver and power circuitry for secondary faults.",
+  "sort_order": 160,
+  "section": "PCB Assemblies",
+  "equipment_types": "VFD, Drive, Inverter",
+  "completion_step": "Fan supply board repaired and tested"
+ },
+ {
+  "phrase_key": "r_service_pcb",
+  "phrase_type": "Recommended Action",
+  "text": "Carry out complete servicing of all PCB boards, including cleaning, inspection, testing and rework as required.",
+  "sort_order": 170,
+  "section": "PCB Assemblies",
+  "default_checked": 1,
+  "completion_step": "All PCB boards serviced, cleaned and tested"
+ },
+ {
+  "phrase_key": "r_solder",
+  "phrase_type": "Recommended Action",
+  "text": "Rework weak or suspect solder joints.",
+  "sort_order": 180,
+  "section": "PCB Assemblies",
+  "completion_step": "Weak or stressed solder joints re-soldered"
+ },
+ {
+  "phrase_key": "r_faultinfo",
+  "phrase_type": "Recommended Action",
+  "text": "Obtain the detailed fault description or fault codes from the customer before proceeding with repairs.",
+  "sort_order": 190,
+  "section": "PCB Assemblies",
+  "completion_step": "Fault details received and repair scope confirmed"
+ },
+ {
+  "phrase_key": "r_cap_clean",
+  "phrase_type": "Recommended Action",
+  "text": "Retain the existing capacitor banks and carry out complete cleaning.",
+  "sort_order": 200,
+  "section": "Capacitor Banks",
+  "equipment_types": "VFD, Drive, Inverter",
+  "completion_step": "Capacitor banks cleaned and verified within limits"
+ },
+ {
+  "phrase_key": "r_cap_replace",
+  "phrase_type": "Recommended Action",
+  "text": "Replace the capacitor banks.",
+  "sort_order": 210,
+  "section": "Capacitor Banks",
+  "equipment_types": "VFD, Drive, Inverter",
+  "completion_step": "Capacitor banks replaced"
+ },
+ {
+  "phrase_key": "r_fan_clean",
+  "phrase_type": "Recommended Action",
+  "text": "Clean the cooling fan and heat sinks and verify airflow.",
+  "sort_order": 220,
+  "section": "Cooling System",
+  "completion_step": "Cooling fan and heat sinks cleaned; airflow verified"
+ },
+ {
+  "phrase_key": "r_fan_replace",
+  "phrase_type": "Recommended Action",
+  "text": "Replace the faulty cooling fan.",
+  "sort_order": 230,
+  "section": "Cooling System",
+  "completion_step": "Cooling fan replaced"
+ },
+ {
+  "phrase_key": "r_clean",
+  "phrase_type": "Recommended Action",
+  "text": "Carry out complete internal cleaning of the unit, including PCBs, busbars, terminals and wiring.",
+  "sort_order": 240,
+  "section": "General",
+  "default_checked": 1,
+  "completion_step": "Complete internal cleaning carried out"
+ },
+ {
+  "phrase_key": "r_terminals",
+  "phrase_type": "Recommended Action",
+  "text": "Check and tighten all electrical terminals and power connections.",
+  "sort_order": 250,
+  "section": "General",
+  "completion_step": "All terminals and electrical connections tightened"
+ },
+ {
+  "phrase_key": "r_test",
+  "phrase_type": "Recommended Action",
+  "text": "Perform a complete operational test before returning the unit to service.",
+  "sort_order": 260,
+  "section": "General",
+  "default_checked": 1,
+  "completion_step": "Final operational test completed"
+ },
+ {
+  "phrase_key": "f_igbt_ok",
+  "phrase_type": "Finding",
+  "text": "IGBT power modules and the associated driver boards were found electrically good during inspection.",
+  "sort_order": 270,
+  "section": "Power Section",
+  "equipment_types": "VFD, Drive, Inverter",
+  "suggests_keys": [
+   "r_power_service"
+  ]
+ },
+ {
+  "phrase_key": "f_igbt_bad",
+  "phrase_type": "Finding",
+  "text": "IGBT power module found {detail}.",
+  "sort_order": 280,
+  "section": "Power Section",
+  "equipment_types": "VFD, Drive, Inverter",
+  "suggests_keys": [
+   "r_igbt",
+   "r_thermal"
+  ]
+ },
+ {
+  "phrase_key": "f_thermal",
+  "phrase_type": "Finding",
+  "text": "The existing thermal interface compound on the IGBT modules has deteriorated.",
+  "sort_order": 290,
+  "section": "Power Section",
+  "equipment_types": "VFD, Drive, Inverter",
+  "suggests_keys": [
+   "r_thermal"
+  ]
+ },
+ {
+  "phrase_key": "f_passive",
+  "phrase_type": "Finding",
+  "text": "Multiple passive electronic components across the PCB assemblies were found weak and out of tolerance.",
+  "sort_order": 300,
+  "section": "PCB Assemblies",
+  "suggests_keys": [
+   "r_passive",
+   "r_service_pcb"
+  ]
+ },
+ {
+  "phrase_key": "f_burnt",
+  "phrase_type": "Finding",
+  "text": "{detail} found burnt and electrically damaged.",
+  "sort_order": 310,
+  "section": "PCB Assemblies",
+  "suggests_keys": [
+   "r_burnt"
+  ]
+ },
+ {
+  "phrase_key": "f_interface",
+  "phrase_type": "Finding",
+  "text": "Interface board found burnt and needs to be replaced with a new board.",
+  "sort_order": 320,
+  "section": "PCB Assemblies",
+  "equipment_types": "VFD, Drive, Inverter",
+  "suggests_keys": [
+   "r_interface"
+  ]
+ },
+ {
+  "phrase_key": "f_fanboard",
+  "phrase_type": "Finding",
+  "text": "Fan supply board found faulty.",
+  "sort_order": 330,
+  "section": "PCB Assemblies",
+  "equipment_types": "VFD, Drive, Inverter",
+  "suggests_keys": [
+   "r_fanboard"
+  ]
+ },
+ {
+  "phrase_key": "f_noshort",
+  "phrase_type": "Finding",
+  "text": "The PCBs were inspected and no short circuits were detected during the preliminary checks.",
+  "sort_order": 340,
+  "section": "PCB Assemblies"
+ },
+ {
+  "phrase_key": "f_unknown",
+  "phrase_type": "Finding",
+  "text": "The exact faulty section could not be conclusively identified during the initial inspection.",
+  "sort_order": 350,
+  "section": "PCB Assemblies",
+  "suggests_keys": [
+   "r_faultinfo"
+  ]
+ },
+ {
+  "phrase_key": "f_solder",
+  "phrase_type": "Finding",
+  "text": "Weak or suspect solder joints were observed on the PCB assemblies.",
+  "sort_order": 360,
+  "section": "PCB Assemblies",
+  "suggests_keys": [
+   "r_solder"
+  ]
+ },
+ {
+  "phrase_key": "f_cap_ok",
+  "phrase_type": "Finding",
+  "text": "Capacitor banks were tested and found within the manufacturer's specified limits.",
+  "sort_order": 370,
+  "section": "Capacitor Banks",
+  "equipment_types": "VFD, Drive, Inverter",
+  "suggests_keys": [
+   "r_cap_clean"
+  ]
+ },
+ {
+  "phrase_key": "f_cap_bad",
+  "phrase_type": "Finding",
+  "text": "Capacitor banks found {detail} and out of tolerance.",
+  "sort_order": 380,
+  "section": "Capacitor Banks",
+  "equipment_types": "VFD, Drive, Inverter",
+  "suggests_keys": [
+   "r_cap_replace"
+  ]
+ },
+ {
+  "phrase_key": "f_fan_ok",
+  "phrase_type": "Finding",
+  "text": "Cooling fan was tested and found operating normally, with dust contamination only.",
+  "sort_order": 390,
+  "section": "Cooling System",
+  "suggests_keys": [
+   "r_fan_clean"
+  ]
+ },
+ {
+  "phrase_key": "f_fan_bad",
+  "phrase_type": "Finding",
+  "text": "Cooling fan found faulty and not operating correctly.",
+  "sort_order": 400,
+  "section": "Cooling System",
+  "suggests_keys": [
+   "r_fan_replace"
+  ]
+ },
+ {
+  "phrase_key": "f_heatsink",
+  "phrase_type": "Finding",
+  "text": "Heat sinks show dust accumulation, reducing airflow efficiency.",
+  "sort_order": 410,
+  "section": "Cooling System",
+  "suggests_keys": [
+   "r_fan_clean"
+  ]
+ },
+ {
+  "phrase_key": "f_dust",
+  "phrase_type": "Finding",
+  "text": "Dust accumulation was observed throughout the unit, including PCBs, busbars, heat sinks and wiring.",
+  "sort_order": 420,
+  "section": "Mechanical & General",
+  "suggests_keys": [
+   "r_clean"
+  ]
+ },
+ {
+  "phrase_key": "f_carbon",
+  "phrase_type": "Finding",
+  "text": "Carbon deposits were observed inside the unit.",
+  "sort_order": 430,
+  "section": "Mechanical & General",
+  "suggests_keys": [
+   "r_clean"
+  ]
+ },
+ {
+  "phrase_key": "f_mech_ok",
+  "phrase_type": "Finding",
+  "text": "No visible casing damage or corrosion was observed; the mechanical structure is intact.",
+  "sort_order": 440,
+  "section": "Mechanical & General"
+ },
+ {
+  "phrase_key": "f_terminals",
+  "phrase_type": "Finding",
+  "text": "Loose or discoloured terminals and power connections were observed.",
+  "sort_order": 450,
+  "section": "Mechanical & General",
+  "suggests_keys": [
+   "r_terminals"
+  ]
+ },
+ {
+  "phrase_key": "k_repairable",
+  "phrase_type": "Conclusion",
+  "text": "The {equipment} was inspected and the faults described above were identified. The unit is repairable through the recommended corrective actions. After repair, the unit will be completely serviced and fully tested to confirm proper operation and reliable performance.",
+  "sort_order": 460,
+  "default_checked": 1,
+  "label": "Repairable"
+ },
+ {
+  "phrase_key": "k_preventive",
+  "phrase_type": "Conclusion",
+  "text": "The {equipment} was inspected and no major fault was found. Complete servicing and replacement of weak and ageing components is recommended as preventive maintenance to ensure reliable long-term operation.",
+  "sort_order": 470,
+  "label": "Preventive service only"
+ },
+ {
+  "phrase_key": "k_info",
+  "phrase_type": "Conclusion",
+  "text": "The {equipment} was inspected and weak components were identified; however, the exact faulty sections cannot be determined at this stage. Detailed fault information is required from the customer before proceeding with the repair work.",
+  "sort_order": 480,
+  "label": "Awaiting fault details"
+ },
+ {
+  "phrase_key": "k_ber",
+  "phrase_type": "Conclusion",
+  "text": "The {equipment} was inspected and found to have extensive damage. Repair is not considered economical and replacement of the unit is recommended.",
+  "sort_order": 490,
+  "label": "Not economical to repair"
+ },
+ {
+  "phrase_key": "w_rcv",
+  "phrase_type": "Work Step",
+  "text": "Equipment received, logged and tagged with job reference",
+  "sort_order": 500,
+  "section": "Preparation & Safety",
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "w_safe",
+  "phrase_type": "Work Step",
+  "text": "Pre-work safety check — stored energy discharged",
+  "sort_order": 510,
+  "section": "Preparation & Safety",
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "w_scope",
+  "phrase_type": "Work Step",
+  "text": "Inspection report reviewed and repair scope confirmed",
+  "sort_order": 520,
+  "section": "Preparation & Safety",
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "w_dism",
+  "phrase_type": "Work Step",
+  "text": "Unit dismantled and all components labelled and stored safely",
+  "sort_order": 530,
+  "section": "Dismantling",
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "w_reasm",
+  "phrase_type": "Work Step",
+  "text": "Unit reassembled; all fasteners checked and covers refitted",
+  "sort_order": 540,
+  "section": "Reassembly",
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "w_cabling",
+  "phrase_type": "Work Step",
+  "text": "Busbars and cabling reconnected per original layout",
+  "sort_order": 550,
+  "section": "Reassembly",
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "w_visual",
+  "phrase_type": "Work Step",
+  "text": "Visual inspection of reassembled unit completed",
+  "sort_order": 560,
+  "section": "Reassembly",
+  "default_checked": 1
+ },
+ {
+  "phrase_key": "t_igbt",
+  "phrase_type": "Test",
+  "text": "IGBT power modules with driver",
+  "sort_order": 570,
+  "equipment_types": "VFD, Drive, Inverter",
+  "default_checked": 1,
+  "expected": "No short-circuit / open"
+ },
+ {
+  "phrase_key": "t_cap",
+  "phrase_type": "Test",
+  "text": "Capacitor bank capacitance test",
+  "sort_order": 580,
+  "equipment_types": "VFD, Drive, Inverter",
+  "default_checked": 1,
+  "expected": "Within rated µF (±10%)"
+ },
+ {
+  "phrase_key": "t_fan",
+  "phrase_type": "Test",
+  "text": "Cooling fan operation check",
+  "sort_order": 590,
+  "default_checked": 1,
+  "expected": "Full speed, no noise"
+ },
+ {
+  "phrase_key": "t_psu",
+  "phrase_type": "Test",
+  "text": "Control power supply voltages",
+  "sort_order": 600,
+  "default_checked": 1,
+  "expected": "+24V / +15V / +5V OK"
+ },
+ {
+  "phrase_key": "t_phase",
+  "phrase_type": "Test",
+  "text": "Output phase balance (U/V/W)",
+  "sort_order": 610,
+  "equipment_types": "VFD, Drive, Inverter",
+  "default_checked": 1,
+  "expected": "Balanced within ±2%"
+ },
+ {
+  "phrase_key": "t_fault",
+  "phrase_type": "Test",
+  "text": "Fault code / alarm scan",
+  "sort_order": 620,
+  "default_checked": 1,
+  "expected": "No active faults"
+ },
+ {
+  "phrase_key": "t_run",
+  "phrase_type": "Test",
+  "text": "Functional run test",
+  "sort_order": 630,
+  "default_checked": 1,
+  "expected": "Stable operation at rated parameters"
+ },
+ {
+  "phrase_key": "p_630",
+  "phrase_type": "Photo Caption",
+  "text": "Overall unit (as-received condition)",
+  "sort_order": 640
+ },
+ {
+  "phrase_key": "p_640",
+  "phrase_type": "Photo Caption",
+  "text": "Unit internal view (power section)",
+  "sort_order": 650
+ },
+ {
+  "phrase_key": "p_650",
+  "phrase_type": "Photo Caption",
+  "text": "Internal assembly dismantled",
+  "sort_order": 660
+ },
+ {
+  "phrase_key": "p_660",
+  "phrase_type": "Photo Caption",
+  "text": "Fault close-up",
+  "sort_order": 670
+ },
+ {
+  "phrase_key": "p_670",
+  "phrase_type": "Photo Caption",
+  "text": "PCB assemblies — before servicing",
+  "sort_order": 680
+ },
+ {
+  "phrase_key": "p_680",
+  "phrase_type": "Photo Caption",
+  "text": "PCB assemblies — after servicing",
+  "sort_order": 690
+ },
+ {
+  "phrase_key": "p_690",
+  "phrase_type": "Photo Caption",
+  "text": "IGBT modules tested in resistance mode",
+  "sort_order": 700
+ },
+ {
+  "phrase_key": "p_700",
+  "phrase_type": "Photo Caption",
+  "text": "Capacitor bank test readings",
+  "sort_order": 710
+ },
+ {
+  "phrase_key": "p_710",
+  "phrase_type": "Photo Caption",
+  "text": "Cooling fan",
+  "sort_order": 720
+ },
+ {
+  "phrase_key": "p_720",
+  "phrase_type": "Photo Caption",
+  "text": "Reassembled unit — tested",
+  "sort_order": 730
+ }
+]

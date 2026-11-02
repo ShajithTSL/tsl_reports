@@ -1,0 +1,31 @@
+{
+ "actions": [],
+ "creation": "2026-10-28 10:00:00.000000",
+ "modified": "2026-10-28 10:00:00.000000",
+ "owner": "Administrator",
+ "modified_by": "Administrator",
+ "doctype": "DocType",
+ "name": "Report Phrase Link",
+ "module": "TSL Reports",
+ "engine": "InnoDB",
+ "istable": 1,
+ "editable_grid": 1,
+ "field_order": [
+  "phrase"
+ ],
+ "fields": [
+  {
+   "fieldname": "phrase",
+   "fieldtype": "Link",
+   "label": "Phrase",
+   "options": "Report Phrase",
+   "reqd": 1,
+   "in_list_view": 1
+  }
+ ],
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "links": []
+}

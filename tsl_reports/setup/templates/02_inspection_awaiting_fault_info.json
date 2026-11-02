@@ -1,0 +1,90 @@
+{
+ "template_name": "Inspection Report - Awaiting Fault Details",
+ "report_type": "Inspection Report",
+ "report_title": "Technical Inspection Report",
+ "report_subtitle": "Equipment Assessment & Repair Recommendations",
+ "blocks": [
+  {
+   "block_type": "Image",
+   "title": "Overall Unit (As-Received Condition)",
+   "columns": "1"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Equipment Received Condition"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>[Qty] units were received at our workshop for technical inspection and assessment. The internal PCB assemblies and electronic components were examined to assess their general condition.</p>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Inspection Findings"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>Multiple passive components across the inspected units were found weak and require replacement.</li><li>The PCBs were inspected, and no short circuits were detected during the preliminary checks.</li><li>The exact faulty sections responsible for the reported issues could not be conclusively identified during the initial inspection.</li><li>Further fault details are required to identify the specific sections associated with the reported problems.</li></ul>"
+  },
+  {
+   "block_type": "Page Break"
+  },
+  {
+   "block_type": "Image",
+   "title": "Internal Overview - Dismantled",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Internal Overview - Dismantled",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Internal Overview - Dismantled",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Internal Overview - Dismantled",
+   "columns": "2"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Technical Assessment"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>The units require further fault assessment before proceeding with component-level repairs.</p><p>The customer is requested to provide the specific fault description, fault codes, or reported symptoms for each unit.</p>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Recommended Corrective Actions"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>Obtain the detailed fault description or fault codes for each unit.</li><li>Identify the affected circuit sections based on the reported faults.</li><li>Replace the identified weak passive components as required.</li><li>Carry out PCB rework and complete servicing as required after confirming the repair scope.</li></ul>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Conclusion"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>Detailed fault information for each unit is required from the customer before proceeding with the repair work.</p>"
+  }
+ ],
+ "signatories": [
+  {
+   "role": "Inspected By",
+   "designation": "Electronics Engineer",
+   "company_line": "TSL Electronics Services LLC"
+  },
+  {
+   "role": "Verified & Approved By",
+   "designation": "Branch Manager",
+   "company_line": "TSL Electronics Services LLC"
+  }
+ ],
+ "header_layout": "Two Column",
+ "signoff_note": "This report has been prepared in accordance with TSL Electronics Services LLC inspection procedures and is subject to review and approval by the designated branch authority prior to submission to the client."
+}

@@ -1,0 +1,40 @@
+{
+ "actions": [],
+ "creation": "2026-10-28 10:00:00.000000",
+ "modified": "2026-10-28 10:00:00.000000",
+ "owner": "Administrator",
+ "modified_by": "Administrator",
+ "doctype": "DocType",
+ "name": "TSL Report Field Map",
+ "module": "TSL Reports",
+ "engine": "InnoDB",
+ "istable": 1,
+ "editable_grid": 1,
+ "field_order": [
+  "report_field",
+  "source_field"
+ ],
+ "fields": [
+  {
+   "fieldname": "report_field",
+   "fieldtype": "Data",
+   "label": "Report Field",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Fieldname on Evaluation - Technical Report"
+  },
+  {
+   "fieldname": "source_field",
+   "fieldtype": "Data",
+   "label": "Source Field",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Fieldname on the source document"
+  }
+ ],
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "links": []
+}

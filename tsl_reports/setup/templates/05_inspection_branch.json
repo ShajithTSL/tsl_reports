@@ -1,0 +1,158 @@
+{
+ "doctype": "Technical Report Template",
+ "template_name": "Inspection Report - Branch (Component Level)",
+ "report_type": "Inspection Report",
+ "is_default": 0,
+ "disabled": 0,
+ "report_title": "Inspection Report",
+ "header_layout": "Single Column",
+ "show_end_marker": 0,
+ "signoff_note": "",
+ "extra_fields": [
+  {
+   "label": "Plant"
+  },
+  {
+   "label": "WO"
+  },
+  {
+   "label": "Description"
+  }
+ ],
+ "blocks": [
+  {
+   "block_type": "Heading",
+   "title": "Service Performed"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Dismantling"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>Dismantled the complete unit and done careful inspection of inside parts.</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Cleaning"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>Cleaning the unit using compressed air and liquid cleaner. More intense cleaning will be done before delivering the unit.</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Inspection"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>During the inspection process, appropriate tools were utilized to diagnose issues at both the component and PCB (Printed Circuit Board) levels.</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Tools and Equipment"
+  },
+  {
+   "block_type": "Table Row",
+   "title": "Huntron Tracker",
+   "value": "Tracker 2000B",
+   "expected": "10-05-2027",
+   "col_labels": "Description, Model, Calibration Date"
+  },
+  {
+   "block_type": "Table Row",
+   "title": "Digital Multimeter",
+   "value": "Fluke 87 V",
+   "expected": "10-05-2027"
+  },
+  {
+   "block_type": "Table Row",
+   "title": "Advanced Capacitor Tester",
+   "value": "Atlas ESR70G",
+   "expected": "10-05-2027"
+  },
+  {
+   "block_type": "Table Row",
+   "title": "Professional Linear IC Tester",
+   "value": "LMCPU - 05563",
+   "expected": "10-05-2027"
+  },
+  {
+   "block_type": "Table Row",
+   "title": "Industrial HD Microscope",
+   "value": "YIZHAN 48MP",
+   "expected": "10-05-2027"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Check List"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Measurement of Battery",
+   "expected": "Within specification",
+   "col_labels": "Check, Expected, Result / Notes, OK / Faulty"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Measurement of Power Board",
+   "expected": "Within specification"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Function of LCD",
+   "expected": "Display OK"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Function of Touchscreen",
+   "expected": "Touch response OK"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Findings & Results"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>[Describe the findings.]</p>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Visual Inspection"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Shipping Damage",
+   "value": "No",
+   "col_labels": "Item, Observation"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "General Appearance",
+   "value": "Dirty   (Clean / Corroded / Dirty / Water Marks / Component Damage)"
+  },
+  {
+   "block_type": "Image",
+   "title": "Overall unit (as-received condition)",
+   "columns": "2"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Result"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>During our inspection, we found the following defective components:</p><ul><li>[Defective part 1]</li><li>[Defective part 2]</li></ul><p>Replacing these defective parts will restore the unit to normal operation.</p>"
+  }
+ ],
+ "signatories": [
+  {
+   "role": "Evaluated By",
+   "designation": "Technician"
+  },
+  {
+   "role": "Verified and Approved By",
+   "designation": "Technical Supervisor"
+  }
+ ]
+}

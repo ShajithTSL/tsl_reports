@@ -1,0 +1,110 @@
+{
+ "actions": [],
+ "creation": "2026-10-28 10:00:00.000000",
+ "modified": "2026-10-28 10:00:00.000000",
+ "owner": "Administrator",
+ "modified_by": "Administrator",
+ "doctype": "DocType",
+ "name": "TSL Report Settings",
+ "module": "TSL Reports",
+ "engine": "InnoDB",
+ "istable": 0,
+ "editable_grid": 1,
+ "field_order": [
+  "sb_src",
+  "source_doctype",
+  "field_map",
+  "sb_defaults",
+  "default_approver",
+  "approver_role",
+  "inspector_role",
+  "cb_d",
+  "photo_columns",
+  "overall_photo_first"
+ ],
+ "fields": [
+  {
+   "fieldname": "sb_src",
+   "fieldtype": "Section Break",
+   "label": "Auto-fill from Job"
+  },
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Link",
+   "label": "Job / Source Document Type",
+   "options": "DocType",
+   "description": "The document your jobs live in (e.g. Serial No, Issue, Work Order, Job Card). Picking one in the wizard copies client, equipment, model, serial\u2026 into the report."
+  },
+  {
+   "fieldname": "field_map",
+   "fieldtype": "Table",
+   "label": "Field Mapping (optional)",
+   "options": "TSL Report Field Map",
+   "description": "Only needed when names differ. Fields with the same name, and common names like customer/brand/item_code, are copied automatically."
+  },
+  {
+   "fieldname": "sb_defaults",
+   "fieldtype": "Section Break",
+   "label": "Wizard Defaults"
+  },
+  {
+   "fieldname": "default_approver",
+   "fieldtype": "Link",
+   "label": "Default Approver",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "approver_role",
+   "fieldtype": "Data",
+   "label": "Approver Role Label",
+   "default": "Approved By"
+  },
+  {
+   "fieldname": "inspector_role",
+   "fieldtype": "Data",
+   "label": "Inspector Role Label",
+   "default": "Inspected By"
+  },
+  {
+   "fieldname": "cb_d",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "photo_columns",
+   "fieldtype": "Select",
+   "label": "Photos per Row",
+   "options": "1\n2\n3",
+   "default": "2"
+  },
+  {
+   "fieldname": "overall_photo_first",
+   "fieldtype": "Check",
+   "label": "First Photo = Overall Unit (full width, at top)",
+   "default": "1"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "links": [],
+ "issingle": 1
+}

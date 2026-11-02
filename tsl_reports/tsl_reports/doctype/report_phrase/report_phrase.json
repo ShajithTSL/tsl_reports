@@ -1,0 +1,160 @@
+{
+ "actions": [],
+ "creation": "2026-10-28 10:00:00.000000",
+ "modified": "2026-10-28 10:00:00.000000",
+ "owner": "Administrator",
+ "modified_by": "Administrator",
+ "doctype": "DocType",
+ "name": "Report Phrase",
+ "module": "TSL Reports",
+ "engine": "InnoDB",
+ "istable": 0,
+ "editable_grid": 1,
+ "field_order": [
+  "phrase_type",
+  "section",
+  "label",
+  "text",
+  "cb_1",
+  "equipment_types",
+  "default_checked",
+  "sort_order",
+  "disabled",
+  "sb_links",
+  "suggests",
+  "completion_step",
+  "expected",
+  "title",
+  "phrase_key"
+ ],
+ "fields": [
+  {
+   "fieldname": "phrase_type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Complaint\nAssessment\nFinding\nRecommended Action\nConclusion\nWork Step\nTest\nPhoto Caption",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section",
+   "fieldtype": "Data",
+   "label": "Section",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Groups phrases in the wizard and becomes a sub-heading in the report, e.g. Power Section, PCB Assemblies, Cooling System"
+  },
+  {
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "label": "Short Name",
+   "depends_on": "eval:doc.phrase_type==\"Conclusion\"",
+   "description": "Shown as the choice in the wizard, e.g. Repairable"
+  },
+  {
+   "fieldname": "text",
+   "fieldtype": "Small Text",
+   "label": "Text",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Use {detail} where the engineer should type something, e.g. '{detail} found burnt and electrically damaged.' In conclusions you can use {equipment}."
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "equipment_types",
+   "fieldtype": "Data",
+   "label": "Equipment Types",
+   "in_standard_filter": 1,
+   "description": "Comma separated, e.g. VFD, Drive. Leave empty for all equipment. Matched against the report's Equipment Type."
+  },
+  {
+   "fieldname": "default_checked",
+   "fieldtype": "Check",
+   "label": "Ticked by Default"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order",
+   "default": "100"
+  },
+  {
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  },
+  {
+   "fieldname": "sb_links",
+   "fieldtype": "Section Break",
+   "label": "Wizard Behaviour"
+  },
+  {
+   "fieldname": "suggests",
+   "fieldtype": "Table MultiSelect",
+   "label": "Suggests Actions",
+   "options": "Report Phrase Link",
+   "depends_on": "eval:doc.phrase_type==\"Finding\"",
+   "description": "When this finding is ticked, these recommended actions are ticked automatically"
+  },
+  {
+   "fieldname": "completion_step",
+   "fieldtype": "Data",
+   "label": "Step Text in Work Completion Report",
+   "depends_on": "eval:doc.phrase_type==\"Recommended Action\"",
+   "description": "How this action reads once done, e.g. 'Interface board replaced with a new board'. Leave empty to reuse the text."
+  },
+  {
+   "fieldname": "expected",
+   "fieldtype": "Data",
+   "label": "Expected Result",
+   "depends_on": "eval:doc.phrase_type==\"Test\""
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "phrase_key",
+   "fieldtype": "Data",
+   "label": "Key",
+   "hidden": 1,
+   "read_only": 1,
+   "no_copy": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "sort_order",
+ "sort_order": "ASC",
+ "states": [],
+ "links": [],
+ "autoname": "hash",
+ "title_field": "title",
+ "show_title_field_in_link": 1,
+ "search_fields": "phrase_type,section",
+ "track_changes": 1
+}

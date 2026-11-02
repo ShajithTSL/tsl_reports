@@ -1,0 +1,201 @@
+{
+ "template_name": "Inspection Report - VFD (Oilfield / ADNOC)",
+ "report_type": "Inspection Report",
+ "report_title": "Technical Inspection Report",
+ "show_end_marker": 1,
+ "extra_fields": [
+  {
+   "label": "Notification No."
+  },
+  {
+   "label": "Rig No."
+  }
+ ],
+ "blocks": [
+  {
+   "block_type": "Heading",
+   "title": "Scope of Inspection"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>This inspection covers the complete inverter module (VFD) received at the TSL workshop. The assessment includes visual inspection, electrical testing, and functional evaluation of all major assemblies.</p>"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Power Modules (IGBTs)",
+   "value": "Electrical Testing & Visual",
+   "col_labels": "Component, Inspection Type"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Driver & Control Boards (PCBs)",
+   "value": "Visual & Functional"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Capacitor Banks",
+   "value": "Capacitance Testing & Visual"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Cooling Fans & Heat Sinks",
+   "value": "Visual & Performance Check"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "DC Bus / Busbars",
+   "value": "Visual & Continuity"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Terminals & Electrical Connections",
+   "value": "Visual & Torque Check"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Mechanical & External Enclosure",
+   "value": "Visual Inspection"
+  },
+  {
+   "block_type": "Image",
+   "title": "Overall Unit (As-Received Condition)",
+   "columns": "1"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Assessment Summary"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>A comprehensive inspection and diagnostic evaluation were carried out on the inverter module. The following conditions were identified during inspection:</p><ul><li>[Preliminary finding 1]</li><li>[Preliminary finding 2]</li></ul>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Dismantling & Inspection Procedure"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>To facilitate complete internal inspection, the following procedures were performed:</p><ul><li>Removed external covers and protective panels.</li><li>Safely discharged the DC Bus capacitor bank.</li><li>Removed power modules (IGBT assemblies).</li><li>Removed IGBT Driver Boards for detailed inspection.</li><li>Inspected all PCB assemblies for damaged components.</li><li>Inspected capacitor banks and verified capacitance values.</li><li>Examined busbars, terminals, cooling assemblies, and internal wiring.</li></ul>"
+  },
+  {
+   "block_type": "Image",
+   "title": "Dismantling in Progress",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Internal Assembly dismantled",
+   "columns": "2"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Inspection Observations"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Power Section (IGBTs & Busbars)"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Observation]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "PCB Assemblies"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Observation]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Capacitor Banks"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Observation]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Cooling System (Fans & Heat Sinks)"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Observation]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Mechanical & External Condition"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Observation]</li></ul>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Recommended Actions"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Power Section"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Action]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "PCB Refurbishment and Replacement"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Action]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Capacitor Banks"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Action]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Cooling Systems"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Action]</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Complete Internal Cleaning"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>Remove all accumulated dust from the complete inverter.</li><li>Perform insulation testing following cleaning and refurbishment.</li></ul>"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Testing & Quality Assurance"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>Perform controlled power-up after refurbishment.</li><li>Perform functional testing under controlled operating conditions.</li><li>Record all electrical test parameters and generate the final test report.</li></ul>"
+  }
+ ],
+ "signatories": [
+  {
+   "role": "Inspected By",
+   "designation": "Inspection Engineer",
+   "company_line": "TSL Electronics Services LLC"
+  },
+  {
+   "role": "Verified & Approved By",
+   "designation": "Branch Manager",
+   "company_line": "TSL Electronics Services LLC"
+  }
+ ],
+ "header_layout": "Two Column",
+ "signoff_note": "This report has been prepared in accordance with TSL Electronics Services LLC inspection procedures and is subject to review and approval by the designated branch authority prior to submission to the client."
+}

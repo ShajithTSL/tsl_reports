@@ -1,0 +1,282 @@
+{
+ "template_name": "Work Completion Report - VFD",
+ "report_type": "Work Completion Report",
+ "is_default": 1,
+ "report_title": "Work Completion Report",
+ "signoff_note": "",
+ "extra_fields": [
+  {
+   "label": "Notification No."
+  },
+  {
+   "label": "Inspection Report Ref."
+  },
+  {
+   "label": "Date Work Completed"
+  },
+  {
+   "label": "Rig No."
+  },
+  {
+   "label": "Lead Technician"
+  }
+ ],
+ "blocks": [
+  {
+   "block_type": "Heading",
+   "title": "Work Overview"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>This report covers the refurbishment, servicing, component replacement, cleaning, inspection, and functional restoration carried out at the TSL Electronics Services LLC workshop. The work included:</p><ul><li>Complete dismantling and detailed internal inspection of the unit.</li><li>Replacement of all identified weak, faulty, and out-of-tolerance passive electronic components.</li><li>Comprehensive cleaning of all internal PCB assemblies, busbars, cooling paths, and enclosure.</li><li>Electrical inspection, verification testing, and functional restoration.</li><li>Final operational testing carried out, confirming the unit is functioning correctly and ready for service.</li></ul>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Repair Steps Performed"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Preparation & Safety"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Equipment received, logged, and tagged with job reference"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Pre-work safety check — stored energy discharged (DC bus)"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Inspection report reviewed and repair scope confirmed"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Dismantling"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "External covers and protective panels removed"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "DC bus isolated and capacitor banks safely discharged"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Power modules (IGBTs) disconnected and removed"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Driver and control boards (PCBs) removed"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Capacitor banks removed"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Cooling fans removed"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Busbars and cabling disconnected"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "All components labelled and stored safely for inspection/replacement"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Cleaning"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Internal enclosure cleaned (compressed air + vacuum)"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Busbars and DC bus cleaned with electrical-grade solvent"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "PCBs cleaned — dust and contamination removed"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Heat sinks cleaned — fins cleared of debris"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Cooling fans cleaned"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Capacitor banks cleaned"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "IGBTs and power modules cleaned"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Component Servicing & Replacement"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Faulty / degraded passive components replaced on PCB assemblies and control boards"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Weak or stressed solder joints re-soldered"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "IGBT power modules with driver PCB serviced and cleaned"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Capacitor banks tested"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Cooling fans serviced"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Thermal paste re-applied on IGBT heat sinks"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "All terminals and electrical connections tightened and torqued"
+  },
+  {
+   "block_type": "Sub Heading",
+   "title": "Reassembly"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Capacitor banks reassembled and secured"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "IGBTs reinstalled and torqued to spec"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Driver boards, control boards and power supply boards reinstalled and connected"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Cooling fans reinstalled"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Busbars and cabling reconnected per original layout"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "All fasteners checked — covers and panels refitted"
+  },
+  {
+   "block_type": "Checklist Row",
+   "title": "Visual inspection of reassembled unit completed"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Testing & Verification"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "IGBT power modules with driver",
+   "expected": "No short-circuit / open"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Capacitor Bank Capacitance Test",
+   "expected": "Within rated µF (±10%)"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Cooling Fan Operation Check",
+   "expected": "Full speed, no noise"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Control Power Supply Voltages",
+   "expected": "+24V / +15V / +5V OK"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Output Phase Balance (U/V/W)",
+   "expected": "Balanced within ±2%"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Fault Code / Alarm Scan",
+   "expected": "No active faults"
+  },
+  {
+   "block_type": "Test Row",
+   "title": "Functional Run Test",
+   "expected": "Stable operation at rated params"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Photographs"
+  },
+  {
+   "block_type": "Image",
+   "title": "Unit condition upon receipt",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Dismantled — Internal assembly",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "PCBs — Before servicing",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "PCBs — After servicing",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Capacitor bank condition after cleaning",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Capacitor bank test readings",
+   "columns": "2"
+  },
+  {
+   "block_type": "Image",
+   "title": "Reassembled unit — Tested",
+   "columns": "2"
+  }
+ ],
+ "signatories": [
+  {
+   "role": "Lead Technician",
+   "designation": null,
+   "company_line": "TSL Electronics Services LLC"
+  },
+  {
+   "role": "QC / Inspector",
+   "designation": null,
+   "company_line": "TSL Electronics Services LLC"
+  },
+  {
+   "role": "Branch Manager",
+   "designation": null,
+   "company_line": "TSL Electronics Services LLC"
+  }
+ ],
+ "header_layout": "Two Column"
+}

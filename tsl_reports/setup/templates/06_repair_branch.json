@@ -1,0 +1,122 @@
+{
+ "doctype": "Technical Report Template",
+ "template_name": "Repair Report - Branch",
+ "report_type": "Work Completion Report",
+ "is_default": 0,
+ "disabled": 0,
+ "report_title": "Repair Report",
+ "header_layout": "Single Column",
+ "show_end_marker": 0,
+ "signoff_note": "",
+ "extra_fields": [
+  {
+   "label": "Sales Person"
+  },
+  {
+   "label": "WO"
+  },
+  {
+   "label": "Type"
+  },
+  {
+   "label": "Description"
+  }
+ ],
+ "blocks": [
+  {
+   "block_type": "Image",
+   "title": "Item Photo",
+   "columns": "1",
+   "image_height": "Medium"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Repair Result"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>During the inspection process, we found that the [main board] is faulty, along with several other electronic components, including capacitors, ICs and related components.</p>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Actions Taken"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>Replaced all the defective components and fixed new.</li><li>Re-soldered all contacts in the unit.</li><li>Replaced the defective components.</li><li>Performed overall maintenance on the unit.</li></ul>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Measurements After Repair"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Measurement of Capacitors",
+   "value": "OK",
+   "col_labels": "Measurement, Result"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Measurement of ICs",
+   "value": "OK"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Measurement of Transistors",
+   "value": "OK"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Measurement of Main Board",
+   "value": "OK"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Measurement of IGBT",
+   "value": "OK"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Test Result"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>Tested by giving input supply voltage and checked the output readings from the unit using the digital multimeter.</p>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Final Analysis"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Returned to service",
+   "value": "YES",
+   "col_labels": "Item, Answer"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Further test needed on site",
+   "value": "NO"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Monitoring / further inspection needed",
+   "value": "NO"
+  },
+  {
+   "block_type": "Key-Value",
+   "title": "Repair / replacement required",
+   "value": "NO"
+  }
+ ],
+ "signatories": [
+  {
+   "role": "Evaluated By",
+   "designation": "Technician"
+  },
+  {
+   "role": "Verified and Approved By",
+   "designation": "Technical Supervisor"
+  }
+ ]
+}

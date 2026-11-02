@@ -1,0 +1,82 @@
+{
+ "template_name": "Inspection Report - Standard",
+ "report_type": "Inspection Report",
+ "is_default": 1,
+ "report_title": "Technical Inspection Report",
+ "blocks": [
+  {
+   "block_type": "Image",
+   "title": "Overall Unit (As-Received Condition)",
+   "columns": "1"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Complaint Details"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>The unit was received at the workshop for detailed inspection, fault assessment and complete servicing. [Describe the reported fault.]</p>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Inspection and Assessment"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>The unit was subjected to a detailed visual and electrical inspection to identify the source of the fault.</p><ul><li>Removed the required covers and protective assemblies.</li><li>Inspected the affected board for visible damage and component condition.</li><li>Performed component-level inspection and testing of the affected circuit.</li><li>Checked the condition of the power and passive components on all PCB boards.</li><li>Inspected all PCB assemblies, connectors, and solder joints for signs of overheating, contamination, and component ageing.</li></ul>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Inspection Findings"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Finding 1]</li><li>[Finding 2]</li><li>Passive components on the remaining PCB boards are recommended for replacement as preventive maintenance.</li></ul>"
+  },
+  {
+   "block_type": "Image",
+   "title": "Unit internal view",
+   "columns": "3"
+  },
+  {
+   "block_type": "Image",
+   "title": "Affected board (full view)",
+   "columns": "3"
+  },
+  {
+   "block_type": "Image",
+   "title": "Fault close-up",
+   "columns": "3"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Recommended Corrective Actions"
+  },
+  {
+   "block_type": "Text",
+   "content": "<ul><li>[Replace faulty component(s)]</li><li>Carry out complete servicing of all PCB boards, including cleaning, inspection, testing, and rework as required.</li><li>Replace weak and ageing passive components on all PCB boards as part of preventive maintenance.</li><li>Remove the old thermal compound and reapply fresh heat sink paste on the power modules.</li><li>Perform a complete operational test before returning the unit to service.</li></ul>"
+  },
+  {
+   "block_type": "Heading",
+   "title": "Conclusion"
+  },
+  {
+   "block_type": "Text",
+   "content": "<p>[Summary of fault, repair scope and expected outcome.]</p>"
+  }
+ ],
+ "signatories": [
+  {
+   "role": "Inspected By",
+   "designation": "Electronics Engineer",
+   "company_line": "TSL Electronics Services LLC"
+  },
+  {
+   "role": "Approved By",
+   "designation": "Branch Manager",
+   "company_line": "TSL Electronics Services LLC"
+  }
+ ],
+ "header_layout": "Two Column",
+ "signoff_note": "This report has been prepared in accordance with TSL Electronics Services LLC inspection procedures and is subject to review and approval by the designated branch authority prior to submission to the client."
+}

@@ -1,0 +1,188 @@
+{
+ "actions": [],
+ "creation": "2026-10-27 10:00:00.000000",
+ "modified": "2026-10-28 16:00:00.000000",
+ "owner": "Administrator",
+ "modified_by": "Administrator",
+ "doctype": "DocType",
+ "name": "Technical Report Template",
+ "module": "TSL Reports",
+ "engine": "InnoDB",
+ "istable": 0,
+ "editable_grid": 1,
+ "field_order": [
+  "template_name",
+  "report_type",
+  "customer",
+  "is_default",
+  "disabled",
+  "cb_1",
+  "report_title",
+  "report_subtitle",
+  "header_format",
+  "header_layout",
+  "show_end_marker",
+  "sb_header",
+  "extra_fields",
+  "sb_body",
+  "editor",
+  "sb_sign",
+  "signoff_note",
+  "signatories",
+  "sb_raw",
+  "blocks"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "label": "Template Name",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "report_type",
+   "fieldtype": "Select",
+   "label": "Report Type",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Inspection Report\nWork Completion Report\nTest Report\nOther",
+   "default": "Inspection Report"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer (optional)",
+   "options": "Customer",
+   "in_standard_filter": 1,
+   "description": "If set, this template is suggested automatically for this customer"
+  },
+  {
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "label": "Default for Report Type",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "report_title",
+   "fieldtype": "Data",
+   "label": "Report Title",
+   "description": "e.g. TECHNICAL INSPECTION REPORT"
+  },
+  {
+   "fieldname": "report_subtitle",
+   "fieldtype": "Data",
+   "label": "Report Subtitle"
+  },
+  {
+   "fieldname": "header_format",
+   "fieldtype": "Link",
+   "label": "Header Format",
+   "options": "Report Header Format",
+   "description": "Optional. Reports created from this template use this header."
+  },
+  {
+   "fieldname": "header_layout",
+   "fieldtype": "Select",
+   "label": "Header Layout",
+   "options": "Two Column\nSingle Column",
+   "default": "Two Column"
+  },
+  {
+   "fieldname": "show_end_marker",
+   "fieldtype": "Check",
+   "label": "Show '\u2014 END OF REPORT \u2014'"
+  },
+  {
+   "fieldname": "sb_header",
+   "fieldtype": "Section Break",
+   "label": "Extra Header Info",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:(doc.extra_fields || []).length"
+  },
+  {
+   "fieldname": "extra_fields",
+   "fieldtype": "Table",
+   "label": "Extra Header Info",
+   "options": "Technical Report Header Field",
+   "description": "Customer-specific header rows (e.g. Notification No., Rig No.). Values can be left blank."
+  },
+  {
+   "fieldname": "sb_body",
+   "fieldtype": "Section Break",
+   "label": "Template Content"
+  },
+  {
+   "fieldname": "editor",
+   "fieldtype": "HTML",
+   "label": "Editor"
+  },
+  {
+   "fieldname": "sb_sign",
+   "fieldtype": "Section Break",
+   "label": "Sign-Off"
+  },
+  {
+   "fieldname": "signoff_note",
+   "fieldtype": "Small Text",
+   "label": "Sign-Off Statement"
+  },
+  {
+   "fieldname": "signatories",
+   "fieldtype": "Table",
+   "label": "Signatories",
+   "options": "Technical Report Signatory"
+  },
+  {
+   "fieldname": "sb_raw",
+   "fieldtype": "Section Break",
+   "label": "Advanced: Block Table",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "blocks",
+   "fieldtype": "Table",
+   "label": "Blocks",
+   "options": "Technical Report Block"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "links": [],
+ "autoname": "field:template_name",
+ "naming_rule": "By fieldname",
+ "title_field": "template_name",
+ "track_changes": 1,
+ "allow_rename": 1,
+ "search_fields": "report_type,customer"
+}
