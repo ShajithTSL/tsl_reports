@@ -24,6 +24,7 @@ frappe.provide("tsl_reports");
 		"Table Row":     { label: __("Table (3–4 columns)"), short: "Table", color: "#B5651D" },
 		"Options Row":   { label: __("Tick options"), short: "Ticks", color: "#2F7D4F" },
 		"Info Table":    { label: __("Info table"),  short: "Info",  color: "#0E7490" },
+		"Spacer":        { label: __("Space"),       short: "Space", color: "#9AA5B1" },
 		"Page Break":    { label: __("Page break"),  short: "Break", color: "#888" },
 	};
 
@@ -104,6 +105,8 @@ frappe.provide("tsl_reports");
 .tre-tpl:hover { border-color:var(--primary, #2490ef); }
 .tre-tpl small { display:block; color:var(--text-muted); }
 .tre-count { font-size:11px; color:var(--text-muted); }
+.tre-boxnames { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:4px; font-size:11px; color:var(--text-muted); }
+.tre-boxnames input { max-width:220px; border-color:var(--border-color); font-size:12px; }
 .tre-thumbcol { display:flex; flex-direction:column; align-items:center; gap:3px; flex-shrink:0; }
 .tre-rot { display:flex; gap:4px; }
 .tre-rot button { border:1px solid var(--border-color); background:var(--card-bg,#fff); border-radius:6px; font-size:13px; line-height:1; padding:2px 10px; color:var(--text-muted); }
@@ -184,7 +187,10 @@ frappe.provide("tsl_reports");
 			if (this.template_picker && this.on_choose_template) btn(__("Load Template"), "btn-default", () => this.on_choose_template(this.frm));
 			btn(`+ ${__("Add Photos")}`, "btn-default", () => this.pick_photos(this.insert_index()), __("Select several photos at once"));
 			if (this.has_type("Checklist Row")) btn(__("All steps Done"), "btn-default", () => this.fill_status("Checklist Row", "Done"), __("Marks every checklist step without a status as Done"));
-			if (this.has_type("Test Row")) btn(__("All tests Pass"), "btn-default", () => this.fill_status("Test Row", "Pass"), __("Marks every test without a result as Pass"));
+			if (this.has_type("Test Row")) {
+				const ok = this.labels("Test Row", this.rows().find((x) => x.block_type === "Test Row" && x.status_labels))[0];
+				btn(__("All tests {0}", [ok]), "btn-default", () => this.fill_status("Test Row", "Pass"), __("Marks every test without a result as {0}", [ok]));
+			}
 			$(`<span class="tre-sp"></span><span class="tre-count">${n} ${n === 1 ? __("block") : __("blocks")}</span>`).appendTo($t);
 			if (this.preview_enabled) {
 				btn(this.show_preview ? __("Hide Preview") : __("Live Preview"), this.show_preview ? "btn-primary" : "btn-default", () => this.toggle_preview());
@@ -271,6 +277,37 @@ frappe.provide("tsl_reports");
 				this.render_list();
 				this.$list.find(".tre-info tr:last th input").trigger("focus");
 			});
+		}
+
+		box_names(r, type) {
+			// "Box names" for this table (first row): e.g. OK, Faulty, N/A – buttons update as you type
+			const order = type === "Test Row" ? "Pass, Fail, N/A" : "Done, N/A";
+			const def = (type === "Test Row" ? tsl_reports.label_defaults.test : tsl_reports.label_defaults.check).join(", ");
+			const $w = $(`<div class="tre-boxnames">
+				<span>${__("Box names for this table")}:</span>
+				<input class="tre-in" data-field="status_labels" placeholder="${esc(def)}">
+				<span class="tre-ph">${__("in the order {0} · empty = {1}", [order, def])}</span></div>`);
+			const $i = $w.find("input").val(r.status_labels || "");
+			const apply = () => {
+				const card = $w.closest(".tre-card");
+				const names = this.labels(type, r);
+				// relabel the buttons of every row of this table without a full re-render
+				let $c = card;
+				while ($c.length) {
+					$c.find(".tre-seg").first().find("button").each((i, btn) => { if (names[i]) btn.textContent = names[i]; });
+					$c = $c.next(".tre-gap").next(".tre-card.tre-cont");
+				}
+			};
+			$i.on("input", () => { this.set(r, "status_labels", $i.val()); apply(); });
+			$i.on("change", () => this.render_toolbar_only());
+			return $w;
+		}
+
+		labels(type, head) {
+			// printed names of the result boxes: first row of the table, else TSL Report Settings, else built-in
+			const own = ((head && head.status_labels) || "").split(",").map((x) => x.trim()).filter(Boolean);
+			if (own.length) return own;
+			return type === "Test Row" ? tsl_reports.label_defaults.test : tsl_reports.label_defaults.check;
 		}
 
 		has_type(t) { return this.rows().some((r) => r.block_type === t); }
@@ -390,10 +427,10 @@ frappe.provide("tsl_reports");
 				$i.on("input", () => this.set(r, field, $i.val()));
 				return $i;
 			};
-			const seg = (options, bad) => {
+			const seg = (options, bad, labels) => {
 				const $s = $(`<div class="tre-seg"></div>`);
-				options.forEach((o) => {
-					$(`<button class="${r.status === o ? "on" : ""} ${o === bad ? "bad" : ""}">${esc(__(o))}</button>`).appendTo($s)
+				options.forEach((o, i) => {
+					$(`<button class="${r.status === o ? "on" : ""} ${o === bad ? "bad" : ""}">${esc((labels && labels[i]) || __(o))}</button>`).appendTo($s)
 						.on("click", (e) => {
 							e.preventDefault();
 							const v = r.status === o ? "" : o;
@@ -413,6 +450,8 @@ frappe.provide("tsl_reports");
 					$row.append($(`<div class="grow"></div>`).append(input("title", r.block_type === "Heading" ? __("Section heading, e.g. Inspection Findings") : __("Sub heading"))));
 					const $no = $(`<label class="tre-meta" style="margin:0"><input type="checkbox" ${r.no_number ? "checked" : ""}> ${__("no number")}</label>`).appendTo($row);
 					$no.find("input").on("change", (e) => { this.set(r, "no_number", e.target.checked ? 1 : 0); this.render_list(); });
+					const $br = $(`<label class="tre-meta" style="margin:0" title="${__("Unticked: this section stays together on one page")}"><input type="checkbox" ${r.allow_break ? "checked" : ""}> ${__("page break")}</label>`).appendTo($row);
+					$br.find("input").on("change", (e) => this.set(r, "allow_break", e.target.checked ? 1 : 0));
 					break;
 				}
 				case "Text":
@@ -421,17 +460,19 @@ frappe.provide("tsl_reports");
 				case "Checklist Row": {
 					const $row = $(`<div class="tre-row"></div>`).appendTo($b);
 					$row.append($(`<div class="grow"></div>`).append(input("title", __("Step performed"))));
-					$row.append(seg(["Done", "N/A"]));
+					$row.append(seg(["Done", "N/A"], null, this.labels("Checklist Row", ctx.head)));
+					if (ctx.first_of_group) $b.append(this.box_names(r, "Checklist Row"));
 					$b.append(input("value", __("Notes / observations (optional)"), "small"));
 					break;
 				}
 				case "Test Row": {
 					const $row = $(`<div class="tre-row"></div>`).appendTo($b);
 					$row.append($(`<div class="grow"></div>`).append(input("title", __("Test / verification"))));
-					$row.append(seg(["Pass", "Fail", "N/A"], "Fail"));
+					$row.append(seg(["Pass", "Fail", "N/A"], "Fail", this.labels("Test Row", ctx.head)));
 					const $r2 = $(`<div class="tre-row"></div>`).appendTo($b);
 					$r2.append($(`<div class="grow"></div>`).append(input("expected", __("Expected result"), "small")));
 					$r2.append($(`<div class="grow"></div>`).append(input("value", __("Actual reading"), "small")));
+					if (ctx.first_of_group) $b.append(this.box_names(r, "Test Row"));
 					break;
 				}
 				case "Key-Value": {
@@ -491,6 +532,14 @@ frappe.provide("tsl_reports");
 				case "Info Table":
 					this.render_info($b);
 					break;
+				case "Spacer": {
+					const size = r.image_height || "Medium";
+					const $m = $(`<div class="tre-meta" style="margin:4px 0 0">${__("Empty space")}: </div>`).appendTo($b);
+					const $sg = $(`<div class="tre-seg"></div>`).appendTo($m);
+					[["Small", "4 mm"], ["Medium", "8 mm"], ["Large", "15 mm"]].forEach(([k, l]) => $(`<button class="${size === k ? "on" : ""}">${l}</button>`).appendTo($sg)
+						.on("click", (e) => { e.preventDefault(); this.set(r, "image_height", k); this.render_list(); }));
+					break;
+				}
 				case "Page Break":
 					$b.append(`<div class="tre-pb"><span>${__("Page break – next block starts on a new page")}</span></div>`);
 					break;
@@ -500,6 +549,10 @@ frappe.provide("tsl_reports");
 			$b.on("keydown", "input.tre-in", (e) => {
 				if (e.key !== "Enter") return;
 				e.preventDefault();
+				if (["status_labels", "col_labels", "choices"].includes(e.currentTarget.dataset.field)) {
+					e.currentTarget.blur(); // just apply the setting
+					return;
+				}
 				const t = r.block_type;
 				const idx = this.rows().indexOf(r) + 1;
 				if (["Checklist Row", "Test Row", "Key-Value", "Table Row", "Options Row"].includes(t)) {
@@ -934,13 +987,31 @@ frappe.provide("tsl_reports");
 
 	// ------------------------------------------------------------------ public API
 	tsl_reports.BLOCK_FIELDS = ["block_type", "title", "content", "value", "expected", "status",
-		"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from", "choices"];
+		"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from", "choices", "allow_break", "status_labels"];
 	tsl_reports.BlockEditor = BlockEditor;
+	tsl_reports.label_defaults = { test: ["Pass", "Fail", "N/A"], check: ["Done", "N/A"] };
+	tsl_reports.load_label_defaults = function () {
+		if (!frappe.db || !frappe.db.get_value) return Promise.resolve();
+		tsl_reports._labels_loaded = true;  // re-read on every form load, so Settings changes show up at once
+		return frappe.db.get_value("TSL Report Settings", "TSL Report Settings", ["test_labels", "check_labels"]).then((r) => {
+			const m = (r && r.message) || {};
+			const sp = (v) => (v || "").split(",").map((x) => x.trim()).filter(Boolean);
+			if (sp(m.test_labels).length) tsl_reports.label_defaults.test = sp(m.test_labels);
+			if (sp(m.check_labels).length) tsl_reports.label_defaults.check = sp(m.check_labels);
+		}).catch(() => {});
+	};
 
 	tsl_reports.mount_editor = function (frm, opts) {
 		if (!frm.fields_dict[opts.html_field]) return null;
 		if (!frm.__tre || frm.__tre.frm !== frm) frm.__tre = new BlockEditor(frm, opts);
 		frm.__tre.render();
+		if (!frm.__tre_labels) {
+			frm.__tre_labels = true;
+			const before = JSON.stringify(tsl_reports.label_defaults);
+			tsl_reports.load_label_defaults().then(() => {
+				if (frm.__tre && JSON.stringify(tsl_reports.label_defaults) !== before) frm.__tre.render();
+			});
+		}
 		return frm.__tre;
 	};
 
