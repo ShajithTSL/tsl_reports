@@ -1,7 +1,7 @@
 {
  "actions": [],
  "creation": "2026-10-28 10:00:00.000000",
- "modified": "2026-10-28 10:00:00.000000",
+ "modified": "2026-11-04 18:00:00.000000",
  "owner": "Administrator",
  "modified_by": "Administrator",
  "doctype": "DocType",
@@ -20,7 +20,11 @@
   "inspector_role",
   "cb_d",
   "photo_columns",
-  "overall_photo_first"
+  "overall_photo_first",
+  "sb_status",
+  "test_labels",
+  "cb_status",
+  "check_labels"
  ],
  "fields": [
   {
@@ -81,6 +85,29 @@
    "fieldtype": "Check",
    "label": "First Photo = Overall Unit (full width, at top)",
    "default": "1"
+  },
+  {
+   "fieldname": "sb_status",
+   "fieldtype": "Section Break",
+   "label": "Result Box Labels"
+  },
+  {
+   "fieldname": "test_labels",
+   "fieldtype": "Data",
+   "label": "Test Result Labels",
+   "default": "Pass, Fail, N/A",
+   "description": "Printed names for the three result boxes of test rows, in the order Pass, Fail, N/A \u2013 e.g. OK, Faulty, N/A. A single table can override this (Status Labels on its first row)."
+  },
+  {
+   "fieldname": "cb_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "check_labels",
+   "fieldtype": "Data",
+   "label": "Checklist Labels",
+   "default": "Done, N/A",
+   "description": "Printed names for checklist boxes, in the order Done, N/A."
   }
  ],
  "permissions": [

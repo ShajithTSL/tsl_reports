@@ -202,4 +202,3 @@ bench --site <site> execute tsl_reports.setup.install.install_templates  # re-ad
 ## Photo privacy
 
 Photos are uploaded as public files so they always render in PDFs. To store them as private files, set `UPLOAD_PRIVATE = 1` at the top of `public/js/tr_block_editor.js` and rebuild.
-# tsl_reports

@@ -1,7 +1,7 @@
 {
  "actions": [],
  "creation": "2026-10-27 10:00:00.000000",
- "modified": "2026-11-04 16:00:00.000000",
+ "modified": "2026-11-05 10:00:00.000000",
  "owner": "Administrator",
  "modified_by": "Administrator",
  "doctype": "DocType",
@@ -19,19 +19,21 @@
   "value",
   "choices",
   "status",
+  "status_labels",
   "image",
   "image_from",
   "columns",
   "image_height",
   "col_labels",
-  "no_number"
+  "no_number",
+  "allow_break"
  ],
  "fields": [
   {
    "fieldname": "block_type",
    "fieldtype": "Select",
    "label": "Block Type",
-   "options": "Heading\nSub Heading\nText\nInfo Table\nKey-Value\nTable Row\nChecklist Row\nOptions Row\nTest Row\nImage\nPage Break",
+   "options": "Heading\nSub Heading\nText\nInfo Table\nKey-Value\nTable Row\nChecklist Row\nOptions Row\nTest Row\nImage\nSpacer\nPage Break",
    "reqd": 1,
    "in_list_view": 1,
    "columns": 2,
@@ -43,7 +45,7 @@
    "label": "Title / Step / Test / Key / Caption",
    "in_list_view": 1,
    "columns": 3,
-   "depends_on": "eval:![\"Page Break\",\"Text\",\"Info Table\"].includes(doc.block_type)",
+   "depends_on": "eval:![\"Page Break\",\"Text\",\"Info Table\",\"Spacer\"].includes(doc.block_type)",
    "description": "Heading text, checklist step, test name, key, or image caption"
   },
   {
@@ -90,6 +92,13 @@
    "depends_on": "eval:[\"Checklist Row\",\"Test Row\"].includes(doc.block_type)"
   },
   {
+   "fieldname": "status_labels",
+   "fieldtype": "Data",
+   "label": "Status Labels",
+   "depends_on": "eval:[\"Test Row\",\"Checklist Row\"].includes(doc.block_type)",
+   "description": "Optional, first row of the table. Names printed for the result boxes, comma separated, in this order \u2013 test rows: Pass, Fail, N/A (e.g. OK, Faulty, N/A); checklist rows: Done, N/A. Empty = the default from TSL Report Settings."
+  },
+  {
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image",
@@ -115,7 +124,7 @@
    "fieldtype": "Select",
    "label": "Image Size",
    "options": "\nSmall\nMedium\nLarge",
-   "depends_on": "eval:doc.block_type==\"Image\""
+   "depends_on": "eval:[\"Image\",\"Spacer\"].includes(doc.block_type)"
   },
   {
    "fieldname": "col_labels",
@@ -129,6 +138,13 @@
    "fieldtype": "Check",
    "label": "Don't Number",
    "depends_on": "eval:[\"Heading\",\"Sub Heading\"].includes(doc.block_type)"
+  },
+  {
+   "fieldname": "allow_break",
+   "fieldtype": "Check",
+   "label": "Allow Page Break",
+   "depends_on": "eval:[\"Heading\",\"Sub Heading\"].includes(doc.block_type)",
+   "description": "Unticked (default): this section is kept together on one page. Ticked: the section may break across pages."
   }
  ],
  "permissions": [],

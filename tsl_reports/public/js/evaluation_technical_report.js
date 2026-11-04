@@ -3,7 +3,7 @@
 
 const TR_TEMPLATE = "Technical Report Template";
 const TR_BLOCK_FIELDS = ["block_type", "title", "content", "value", "expected", "status",
-	"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from", "choices"];
+	"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from", "choices", "allow_break", "status_labels"];
 const TR_CUSTOMER_FIELDS = ["customer", "client", "customer_name", "client_name"];
 
 const tr = {
