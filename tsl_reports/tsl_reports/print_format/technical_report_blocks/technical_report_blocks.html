@@ -392,13 +392,10 @@
 <div id="footer-html">
   <div class="ft">
     {%- if HF.show_page_numbers %}
-    <table><tr>
+    <table width="100%"><tr>
       <td class="pg">{{ title|e }} | {{ report_no|e }}</td>
       <td class="pg" style="text-align:right">Page <span class="page"></span> of <span class="topage"></span></td>
     </tr></table>
     {%- endif %}
-    {%- if HF.footer_line_1 or HF.footer_line_2 %}<div class="rule"></div>{% endif %}
-    {%- if HF.footer_line_1 %}<div class="addr">{{ HF.footer_line_1|e }}</div>{% endif %}
-    {%- if HF.footer_line_2 %}<div class="addr-ar">{{ HF.footer_line_2|e }}</div>{% endif %}
   </div>
 </div>

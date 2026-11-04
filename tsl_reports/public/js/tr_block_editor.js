@@ -330,7 +330,7 @@ frappe.provide("tsl_reports");
 				case "Test Row": {
 					const $row = $(`<div class="tre-row"></div>`).appendTo($b);
 					$row.append($(`<div class="grow"></div>`).append(input("title", __("Test / verification"))));
-					$row.append(seg(["Pass", "Fail"], "Fail"));
+					$row.append(seg(["Pass", "Fail", "N/A"], "Fail"));
 					const $r2 = $(`<div class="tre-row"></div>`).appendTo($b);
 					$r2.append($(`<div class="grow"></div>`).append(input("expected", __("Expected result"), "small")));
 					$r2.append($(`<div class="grow"></div>`).append(input("value", __("Actual reading"), "small")));

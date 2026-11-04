@@ -1,15 +1,11 @@
 {
  "actions": [],
- "creation": "2026-10-28 10:00:00.000000",
- "modified": "2026-10-28 10:00:00.000000",
- "owner": "Administrator",
- "modified_by": "Administrator",
+ "allow_rename": 1,
+ "autoname": "field:format_name",
+ "creation": "2026-10-28 10:00:00",
  "doctype": "DocType",
- "name": "Report Header Format",
- "module": "TSL Reports",
- "engine": "InnoDB",
- "istable": 0,
  "editable_grid": 1,
+ "engine": "InnoDB",
  "field_order": [
   "format_name",
   "is_default",
@@ -43,27 +39,29 @@
   {
    "fieldname": "format_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Format Name",
    "reqd": 1,
-   "unique": 1,
-   "in_list_view": 1
+   "unique": 1
   },
   {
+   "default": "0",
+   "description": "Used when a report has no header format selected",
    "fieldname": "is_default",
    "fieldtype": "Check",
-   "label": "Default",
    "in_list_view": 1,
-   "description": "Used when a report has no header format selected"
+   "label": "Default"
   },
   {
    "fieldname": "customer",
    "fieldtype": "Link",
-   "label": "Use Automatically for Customer",
-   "options": "Customer",
    "in_list_view": 1,
-   "in_standard_filter": 1
+   "in_standard_filter": 1,
+   "label": "Use Automatically for Customer",
+   "options": "Customer"
   },
   {
+   "default": "0",
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
@@ -74,45 +72,45 @@
    "label": "Header"
   },
   {
+   "default": "Our Logo + Company Name",
    "fieldname": "layout",
    "fieldtype": "Select",
    "label": "Layout",
-   "options": "Our Logo + Company Name\nOur Logo + Customer Logo\nCustomer Logo + Our Logo\nCompany Name Only",
-   "default": "Our Logo + Company Name"
+   "options": "Our Logo + Company Name\nOur Logo + Customer Logo\nCustomer Logo + Our Logo\nCompany Name Only"
   },
   {
+   "default": "/assets/tsl_reports/images/tsl_logo.png",
    "fieldname": "our_logo",
    "fieldtype": "Attach Image",
-   "label": "Our Logo",
-   "default": "/assets/tsl_reports/images/tsl_logo.png"
+   "label": "Our Logo"
   },
   {
+   "default": "15",
    "fieldname": "logo_height",
    "fieldtype": "Int",
-   "label": "Logo Height (mm)",
-   "default": "15"
+   "label": "Logo Height (mm)"
   },
   {
    "fieldname": "cb_1",
    "fieldtype": "Column Break"
   },
   {
+   "default": "TSL ELECTRONICS SERVICES LLC",
    "fieldname": "company_name",
    "fieldtype": "Data",
-   "label": "Company Name",
-   "default": "TSL ELECTRONICS SERVICES LLC"
+   "label": "Company Name"
   },
   {
+   "default": "\u062a\u064a \u0627\u0633 \u0627\u0644 \u0644\u0625\u0635\u0644\u0627\u062d \u0627\u0644\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0627\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u0629 \u0634.\u0630.\u0645.\u0645",
    "fieldname": "company_name_ar",
    "fieldtype": "Data",
-   "label": "Company Name (Arabic)",
-   "default": "\u062a\u064a \u0627\u0633 \u0627\u0644 \u0644\u0625\u0635\u0644\u0627\u062d \u0627\u0644\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0627\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u0629 \u0634.\u0630.\u0645.\u0645"
+   "label": "Company Name (Arabic)"
   },
   {
+   "description": "Optional, e.g. Branch name, licence no. or 'Approved Contractor of \u2026'",
    "fieldname": "tagline",
    "fieldtype": "Data",
-   "label": "Extra Line Under Name",
-   "description": "Optional, e.g. Branch name, licence no. or 'Approved Contractor of \u2026'"
+   "label": "Extra Line Under Name"
   },
   {
    "fieldname": "sb_customer",
@@ -120,26 +118,27 @@
    "label": "Customer in Header"
   },
   {
+   "description": "Leave empty to use the image from the report's Customer record",
    "fieldname": "customer_logo",
    "fieldtype": "Attach Image",
-   "label": "Customer Logo",
-   "description": "Leave empty to use the image from the report's Customer record"
+   "label": "Customer Logo"
   },
   {
    "fieldname": "cb_2",
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "show_customer_name",
    "fieldtype": "Check",
    "label": "Show Customer Name in Header"
   },
   {
+   "default": "Prepared for",
+   "depends_on": "eval:doc.show_customer_name",
    "fieldname": "customer_label",
    "fieldtype": "Data",
-   "label": "Customer Label",
-   "default": "Prepared for",
-   "depends_on": "eval:doc.show_customer_name"
+   "label": "Customer Label"
   },
   {
    "fieldname": "sb_refs",
@@ -147,87 +146,92 @@
    "label": "References (printed on every page)"
   },
   {
+   "description": "e.g. Contract No., PO No., Call-off No. The values here are defaults \u2013 each report can change them. Empty ones are not printed.",
    "fieldname": "references",
    "fieldtype": "Table",
    "label": "References",
-   "options": "Technical Report Header Field",
-   "description": "e.g. Contract No., PO No., Call-off No. The values here are defaults \u2013 each report can change them. Empty ones are not printed."
+   "options": "Technical Report Header Field"
   },
   {
+   "collapsible": 1,
    "fieldname": "sb_footer",
    "fieldtype": "Section Break",
-   "label": "Footer",
-   "collapsible": 1
+   "hidden": 1,
+   "label": "Footer"
   },
   {
+   "default": "UAE-Dubai- Al Qusais Industrial Area 4 - Damascus Street- Warehouse S03 \u2013 E-MAIL: INFO-UAE@TSL-ME.COM - TEL: +971 4 287 0082",
    "fieldname": "footer_line_1",
    "fieldtype": "Small Text",
-   "label": "Footer Line 1",
-   "default": "UAE-Dubai- Al Qusais Industrial Area 4 - Damascus Street- Warehouse S03 \u2013 E-MAIL: INFO-UAE@TSL-ME.COM - TEL: +971 4 287 0082"
+   "label": "Footer Line 1"
   },
   {
+   "default": "\u0627\u0644\u0627\u0645\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u0631\u0628\u064a\u0629 \u0627\u0644\u0645\u062a\u062d\u062f\u0629 - \u062f\u0628\u064a - \u0627\u0644\u0642\u0635\u064a\u0635 \u0627\u0644\u0635\u0646\u0627\u0639\u064a\u0629 4 \u2013 \u0634\u0627\u0631\u0639 \u062f\u0645\u0634\u0642 - \u0645\u0633\u062a\u0648\u062f\u0639: \u0633 03 \u2013 \u062a\u0644\u0641\u0648\u0646: \u200e+971 4 287 0082\u200e \u2013 \u0625\u064a\u0645\u064a\u0644: INFO-UAE@TSL-ME.COM",
+   "description": "Arabic text is printed right-to-left",
    "fieldname": "footer_line_2",
    "fieldtype": "Small Text",
-   "label": "Footer Line 2",
-   "default": "\u0627\u0644\u0627\u0645\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u0631\u0628\u064a\u0629 \u0627\u0644\u0645\u062a\u062d\u062f\u0629 - \u062f\u0628\u064a - \u0627\u0644\u0642\u0635\u064a\u0635 \u0627\u0644\u0635\u0646\u0627\u0639\u064a\u0629 4 \u2013 \u0634\u0627\u0631\u0639 \u062f\u0645\u0634\u0642 - \u0645\u0633\u062a\u0648\u062f\u0639: \u0633 03 \u2013 \u062a\u0644\u0641\u0648\u0646: \u200e+971 4 287 0082\u200e \u2013 \u0625\u064a\u0645\u064a\u0644: INFO-UAE@TSL-ME.COM",
-   "description": "Arabic text is printed right-to-left"
+   "label": "Footer Line 2"
   },
   {
+   "default": "1",
    "fieldname": "show_page_numbers",
    "fieldtype": "Check",
-   "label": "Show Report No. and Page X of Y",
-   "default": "1"
+   "label": "Show Report No. and Page X of Y"
   },
   {
+   "collapsible": 1,
    "fieldname": "sb_colors",
    "fieldtype": "Section Break",
-   "label": "Colours",
-   "collapsible": 1
+   "hidden": 1,
+   "label": "Colours"
   },
   {
+   "default": "#1F4E79",
    "fieldname": "primary_color",
    "fieldtype": "Color",
-   "label": "Table / Line Colour",
-   "default": "#1F4E79"
+   "label": "Table / Line Colour"
   },
   {
    "fieldname": "cb_3",
    "fieldtype": "Column Break"
   },
   {
+   "default": "#1F3864",
    "fieldname": "heading_color",
    "fieldtype": "Color",
-   "label": "Heading Colour",
-   "default": "#1F3864"
+   "label": "Heading Colour"
   }
  ],
+ "image_field": "our_logo",
+ "links": [],
+ "modified": "2026-11-03 16:03:20.908627",
+ "modified_by": "Administrator",
+ "module": "TSL Reports",
+ "name": "Report Header Format",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
-   "read": 1,
-   "write": 1,
    "create": 1,
    "delete": 1,
-   "report": 1,
-   "export": 1,
-   "import": 1,
-   "print": 1,
    "email": 1,
-   "share": 1
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
   },
   {
-   "role": "All",
-   "read": 1
+   "read": 1,
+   "role": "All"
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "links": [],
- "autoname": "field:format_name",
- "naming_rule": "By fieldname",
  "title_field": "format_name",
- "allow_rename": 1,
- "track_changes": 1,
- "image_field": "our_logo"
+ "track_changes": 1
 }
