@@ -11,7 +11,7 @@ frappe.provide("tsl_reports");
 	if (tsl_reports.BlockEditor) return; // already loaded
 	const CDT = "Technical Report Block";
 	const UPLOAD_PRIVATE = 0; // 1 = upload photos as private files
-	const GROUPED = ["Checklist Row", "Test Row", "Key-Value", "Table Row", "Image"];
+	const GROUPED = ["Checklist Row", "Test Row", "Key-Value", "Table Row", "Options Row", "Image"];
 
 	const TYPES = {
 		"Heading":       { label: __("Heading"),     short: "H1",  color: "#1F3864" },
@@ -22,6 +22,7 @@ frappe.provide("tsl_reports");
 		"Test Row":      { label: __("Test result"), short: "Test", color: "#7A3E9D" },
 		"Key-Value":     { label: __("2-column row"), short: "Row",  color: "#A23B5A" },
 		"Table Row":     { label: __("Table (3–4 columns)"), short: "Table", color: "#B5651D" },
+		"Options Row":   { label: __("Tick options"), short: "Ticks", color: "#2F7D4F" },
 		"Info Table":    { label: __("Info table"),  short: "Info",  color: "#0E7490" },
 		"Page Break":    { label: __("Page break"),  short: "Break", color: "#888" },
 	};
@@ -103,6 +104,13 @@ frappe.provide("tsl_reports");
 .tre-tpl:hover { border-color:var(--primary, #2490ef); }
 .tre-tpl small { display:block; color:var(--text-muted); }
 .tre-count { font-size:11px; color:var(--text-muted); }
+.tre-thumbcol { display:flex; flex-direction:column; align-items:center; gap:3px; flex-shrink:0; }
+.tre-rot { display:flex; gap:4px; }
+.tre-rot button { border:1px solid var(--border-color); background:var(--card-bg,#fff); border-radius:6px; font-size:13px; line-height:1; padding:2px 10px; color:var(--text-muted); }
+.tre-rot button:hover { color:var(--text-color); border-color:var(--primary,#2490ef); }
+.tre-chips { display:flex; flex-wrap:wrap; gap:4px; margin:4px 0; }
+.tre-chip { border:1px solid var(--border-color); background:var(--card-bg,#fff); border-radius:12px; font-size:11px; padding:2px 9px; color:var(--text-muted); }
+.tre-chip.on { background:#2F7D4F; border-color:#2F7D4F; color:#fff; }
 .tre-info table { width:100%; border-collapse:collapse; font-size:12px; }
 .tre-info th, .tre-info td { border:1px solid var(--border-color); padding:3px 6px; text-align:left; }
 .tre-info th { width:38%; background:var(--subtle-fg, #f7f9fa); font-weight:600; }
@@ -433,6 +441,34 @@ frappe.provide("tsl_reports");
 					if (ctx.first_of_group) $b.append(input("col_labels", __("Column headers (optional), e.g. Component, Inspection Type"), "small"));
 					break;
 				}
+				case "Options Row": {
+					const split = (v) => (v || "").replace(/\n/g, ",").split(",").map((x) => x.trim()).filter(Boolean);
+					$b.append($(`<div class="tre-row"></div>`).append($(`<div class="grow"></div>`).append(input("title", __("Item, e.g. General Appearance")))));
+					const $chips = $(`<div class="tre-chips"></div>`).appendTo($b);
+					const draw = () => {
+						$chips.empty();
+						const picked = split(r.value).map((x) => x.toLowerCase());
+						split(r.choices).forEach((o) => {
+							const on = picked.includes(o.toLowerCase());
+							$(`<button class="tre-chip ${on ? "on" : ""}">${on ? "☑" : "☐"} ${esc(o)}</button>`).appendTo($chips)
+								.on("click", (e) => {
+									e.preventDefault();
+									const cur = split(r.value);
+									const i = cur.findIndex((x) => x.toLowerCase() === o.toLowerCase());
+									if (i >= 0) cur.splice(i, 1); else cur.push(o);
+									this.set(r, "value", cur.join(", "));
+									draw();
+								});
+						});
+						if (!split(r.choices).length) $chips.append(`<span class="tre-ph">${__("Type the options below")}</span>`);
+					};
+					draw();
+					const $c = $(`<input class="tre-in small" placeholder="${__("Options, comma separated – e.g. Clean, Corroded, Dirty, Dust")}">`).val(r.choices || "");
+					$c.on("input", () => { this.set(r, "choices", $c.val()); draw(); });
+					$b.append($c);
+					if (ctx.first_of_group) $b.append(input("col_labels", __("Column headers (optional), e.g. Cosmetic Appearance, Status"), "small"));
+					break;
+				}
 				case "Table Row": {
 					const labels = (ctx.head.col_labels || "").split(",").map((x) => x.trim()).filter(Boolean);
 					const n = labels.length ? Math.min(4, Math.max(2, labels.length)) : 3;
@@ -466,7 +502,7 @@ frappe.provide("tsl_reports");
 				e.preventDefault();
 				const t = r.block_type;
 				const idx = this.rows().indexOf(r) + 1;
-				if (["Checklist Row", "Test Row", "Key-Value", "Table Row"].includes(t)) {
+				if (["Checklist Row", "Test Row", "Key-Value", "Table Row", "Options Row"].includes(t)) {
 					const nr = this.add(t, idx);
 					this.select(nr.name, true);
 				} else if (t === "Heading" || t === "Sub Heading") {
@@ -532,8 +568,15 @@ frappe.provide("tsl_reports");
 
 		render_image($b, r, ctx) {
 			const $wrap = $(`<div class="tre-img"></div>`).appendTo($b);
-			const $th = $(`<div class="tre-thumb">${r.image ? `<img src="${esc(r.image)}">` : __("Click to add photo")}</div>`).appendTo($wrap);
+			const $col = $(`<div class="tre-thumbcol"></div>`).appendTo($wrap);
+			const $th = $(`<div class="tre-thumb">${r.image ? `<img src="${esc(r.image)}">` : __("Click to add photo")}</div>`).appendTo($col);
 			$th.on("click", () => this.pick_photos(null, r));
+			if (r.image) {
+				const $rot = $(`<div class="tre-rot">
+					<button data-d="270" title="${__("Rotate left")}">⟲</button>
+					<button data-d="90" title="${__("Rotate right")}">⟳</button></div>`).appendTo($col);
+				$rot.find("button").on("click", (e) => { e.preventDefault(); e.stopPropagation(); this.rotate(r, e.currentTarget.dataset.d); });
+			}
 			const $right = $(`<div class="grow" style="flex:1;min-width:0"></div>`).appendTo($wrap);
 			const $cap = $(`<input class="tre-in" data-field="title" placeholder="${__("Caption, e.g. Fan supply board (full view)")}">`).val(r.title || "");
 			$cap.on("input", () => this.set(r, "title", $cap.val()));
@@ -814,6 +857,19 @@ frappe.provide("tsl_reports");
 			return j.message.file_url;
 		}
 
+		rotate(r, degrees) {
+			frappe.call({
+				method: "tsl_reports.api.rotate_image",
+				args: { file_url: r.image, degrees, doctype: this.frm.doctype, docname: this.frm.docname },
+				freeze: true, freeze_message: __("Rotating…"),
+				callback: (res) => {
+					if (!res.message) return;
+					this.set(r, "image", res.message);
+					this.render_list();
+				},
+			});
+		}
+
 		// --------------------------------------------------------- preview
 		toggle_preview() {
 			this.show_preview = !this.show_preview;
@@ -878,7 +934,7 @@ frappe.provide("tsl_reports");
 
 	// ------------------------------------------------------------------ public API
 	tsl_reports.BLOCK_FIELDS = ["block_type", "title", "content", "value", "expected", "status",
-		"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from"];
+		"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from", "choices"];
 	tsl_reports.BlockEditor = BlockEditor;
 
 	tsl_reports.mount_editor = function (frm, opts) {

@@ -15,7 +15,7 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 from ..constants import TARGET_DOCTYPE, TEMPLATE_DOCTYPE
 
-TABLE_TYPES = ["Key-Value", "Table Row", "Checklist Row", "Test Row"]
+TABLE_TYPES = ["Key-Value", "Table Row", "Checklist Row", "Test Row", "Options Row"]
 
 
 def report_fields():

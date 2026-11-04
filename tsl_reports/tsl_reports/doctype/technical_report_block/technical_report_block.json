@@ -1,7 +1,7 @@
 {
  "actions": [],
  "creation": "2026-10-27 10:00:00.000000",
- "modified": "2026-11-04 14:00:00.000000",
+ "modified": "2026-11-04 16:00:00.000000",
  "owner": "Administrator",
  "modified_by": "Administrator",
  "doctype": "DocType",
@@ -17,6 +17,7 @@
   "expected",
   "col4",
   "value",
+  "choices",
   "status",
   "image",
   "image_from",
@@ -30,7 +31,7 @@
    "fieldname": "block_type",
    "fieldtype": "Select",
    "label": "Block Type",
-   "options": "Heading\nSub Heading\nText\nInfo Table\nKey-Value\nTable Row\nChecklist Row\nTest Row\nImage\nPage Break",
+   "options": "Heading\nSub Heading\nText\nInfo Table\nKey-Value\nTable Row\nChecklist Row\nOptions Row\nTest Row\nImage\nPage Break",
    "reqd": 1,
    "in_list_view": 1,
    "columns": 2,
@@ -70,7 +71,14 @@
    "label": "Value / Notes / Reading / Column 2",
    "in_list_view": 1,
    "columns": 3,
-   "depends_on": "eval:[\"Key-Value\",\"Table Row\",\"Checklist Row\",\"Test Row\"].includes(doc.block_type)"
+   "depends_on": "eval:[\"Key-Value\",\"Table Row\",\"Checklist Row\",\"Test Row\",\"Options Row\"].includes(doc.block_type)"
+  },
+  {
+   "fieldname": "choices",
+   "fieldtype": "Small Text",
+   "label": "Options",
+   "depends_on": "eval:doc.block_type==\"Options Row\"",
+   "description": "Options Row: the tick boxes to print, comma separated, e.g. Clean, Corroded, Dirty, Dust. The ticked ones are stored in Value."
   },
   {
    "fieldname": "status",
@@ -113,7 +121,7 @@
    "fieldname": "col_labels",
    "fieldtype": "Data",
    "label": "Column Headers",
-   "depends_on": "eval:[\"Key-Value\",\"Table Row\",\"Checklist Row\",\"Test Row\"].includes(doc.block_type)",
+   "depends_on": "eval:[\"Key-Value\",\"Table Row\",\"Checklist Row\",\"Test Row\",\"Options Row\"].includes(doc.block_type)",
    "description": "Optional, comma separated. Set on the FIRST row of a table. For Table Row, the number of headers (2\u20134) sets the number of columns, e.g. Description, Model, Calibration Date"
   },
   {

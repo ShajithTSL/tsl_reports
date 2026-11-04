@@ -1,15 +1,11 @@
 {
  "actions": [],
- "creation": "2026-10-27 10:00:00.000000",
- "modified": "2026-10-28 16:00:00.000000",
- "owner": "Administrator",
- "modified_by": "Administrator",
+ "allow_rename": 1,
+ "autoname": "field:template_name",
+ "creation": "2026-10-27 10:00:00",
  "doctype": "DocType",
- "name": "Technical Report Template",
- "module": "TSL Reports",
- "engine": "InnoDB",
- "istable": 0,
  "editable_grid": 1,
+ "engine": "InnoDB",
  "field_order": [
   "template_name",
   "report_type",
@@ -36,36 +32,38 @@
   {
    "fieldname": "template_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Template Name",
    "reqd": 1,
-   "unique": 1,
-   "in_list_view": 1
+   "unique": 1
   },
   {
+   "default": "Inspection Report",
    "fieldname": "report_type",
    "fieldtype": "Select",
-   "label": "Report Type",
-   "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
+   "label": "Report Type",
    "options": "Inspection Report\nWork Completion Report\nTest Report\nOther",
-   "default": "Inspection Report"
+   "reqd": 1
   },
   {
+   "description": "If set, this template is suggested automatically for this customer",
    "fieldname": "customer",
    "fieldtype": "Link",
-   "label": "Customer (optional)",
-   "options": "Customer",
    "in_standard_filter": 1,
-   "description": "If set, this template is suggested automatically for this customer"
+   "label": "Customer (optional)",
+   "options": "Customer"
   },
   {
+   "default": "0",
    "fieldname": "is_default",
    "fieldtype": "Check",
-   "label": "Default for Report Type",
-   "in_list_view": 1
+   "in_list_view": 1,
+   "label": "Default for Report Type"
   },
   {
+   "default": "0",
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
@@ -75,10 +73,10 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "e.g. TECHNICAL INSPECTION REPORT",
    "fieldname": "report_title",
    "fieldtype": "Data",
-   "label": "Report Title",
-   "description": "e.g. TECHNICAL INSPECTION REPORT"
+   "label": "Report Title"
   },
   {
    "fieldname": "report_subtitle",
@@ -86,37 +84,39 @@
    "label": "Report Subtitle"
   },
   {
+   "description": "Optional. Reports created from this template use this header.",
    "fieldname": "header_format",
    "fieldtype": "Link",
    "label": "Header Format",
-   "options": "Report Header Format",
-   "description": "Optional. Reports created from this template use this header."
+   "options": "Report Header Format"
   },
   {
+   "default": "Two Column",
    "fieldname": "header_layout",
    "fieldtype": "Select",
    "label": "Header Layout",
-   "options": "Two Column\nSingle Column",
-   "default": "Two Column"
+   "options": "Two Column\nSingle Column"
   },
   {
+   "default": "0",
    "fieldname": "show_end_marker",
    "fieldtype": "Check",
    "label": "Show '\u2014 END OF REPORT \u2014'"
   },
   {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:(doc.extra_fields || []).length",
    "fieldname": "sb_header",
    "fieldtype": "Section Break",
-   "label": "Extra Header Info",
-   "collapsible": 1,
-   "collapsible_depends_on": "eval:(doc.extra_fields || []).length"
+   "label": "Extra Header Info"
   },
   {
+   "allow_bulk_edit": 1,
+   "description": "Customer-specific header rows (e.g. Notification No., Rig No.). Values can be left blank.",
    "fieldname": "extra_fields",
    "fieldtype": "Table",
    "label": "Extra Header Info",
-   "options": "Technical Report Header Field",
-   "description": "Customer-specific header rows (e.g. Notification No., Rig No.). Values can be left blank."
+   "options": "Technical Report Header Field"
   },
   {
    "fieldname": "sb_body",
@@ -145,10 +145,10 @@
    "options": "Technical Report Signatory"
   },
   {
+   "collapsible": 1,
    "fieldname": "sb_raw",
    "fieldtype": "Section Break",
-   "label": "Advanced: Block Table",
-   "collapsible": 1
+   "label": "Advanced: Block Table"
   },
   {
    "fieldname": "blocks",
@@ -157,32 +157,36 @@
    "options": "Technical Report Block"
   }
  ],
+ "links": [],
+ "modified": "2026-11-04 13:49:06.310114",
+ "modified_by": "Administrator",
+ "module": "TSL Reports",
+ "name": "Technical Report Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
-   "read": 1,
-   "write": 1,
    "create": 1,
    "delete": 1,
-   "report": 1,
+   "email": 1,
    "export": 1,
    "print": 1,
-   "email": 1,
-   "share": 1
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
   },
   {
-   "role": "All",
-   "read": 1
+   "read": 1,
+   "role": "All"
   }
  ],
+ "row_format": "Dynamic",
+ "search_fields": "report_type,customer",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "links": [],
- "autoname": "field:template_name",
- "naming_rule": "By fieldname",
  "title_field": "template_name",
- "track_changes": 1,
- "allow_rename": 1,
- "search_fields": "report_type,customer"
+ "track_changes": 1
 }

@@ -128,15 +128,17 @@
    "title": "Visual Inspection"
   },
   {
-   "block_type": "Key-Value",
+   "block_type": "Options Row",
    "title": "Shipping Damage",
+   "choices": "Yes, No",
    "value": "No",
-   "col_labels": "Item, Observation"
+   "col_labels": "Cosmetic Appearance, Status"
   },
   {
-   "block_type": "Key-Value",
+   "block_type": "Options Row",
    "title": "General Appearance",
-   "value": "Dirty   (Clean / Corroded / Dirty / Water Marks / Component Damage)"
+   "choices": "Clean, Corroded, Dirty, Dust, Watermarks, Heat sink clogged, Gasoline Stains, Oil Stains, Burnt Components Signs, Burnt PCB Signs",
+   "value": ""
   },
   {
    "block_type": "Image",

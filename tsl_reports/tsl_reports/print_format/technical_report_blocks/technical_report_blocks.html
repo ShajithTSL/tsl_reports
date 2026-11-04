@@ -103,9 +103,7 @@
 {#- footer shows only "Report | No." and "Page X of Y" (address lines removed) -#}
 {%- set foot_lines = 0 -%}
 {#- wkhtmltopdf drops the footer when it does not fit in the bottom margin – keep room for the page-number line -#}
-
 {%- set mb = (27 if HF.show_page_numbers else 13) + foot_lines * 7 -%}
-
 
 {#- ------------------------------------------------------------------
     3. Macros
@@ -160,6 +158,7 @@
   table.grid tr { page-break-inside: avoid; }
   table.grid tr:nth-child(odd) td { background: #f7f9fc; }
   .opt { white-space: nowrap; margin-right: 6px; }
+  td.opts .opt { display: inline-block; margin: 0 9px 2px 0; }
   .cb { display: inline-block; position: relative; width: 9px; height: 9px; border: 1px solid #555; background: #fff;
         margin-right: 3px; vertical-align: -1px; }
   /* tick mark drawn with CSS (no special font needed) */
@@ -189,6 +188,7 @@
   .endmark { text-align: center; margin-top: 8mm; font-size: 9pt; color: #555; }
   .endmark b { letter-spacing: 1px; }
   .page-break { page-break-after: always; }
+  .keep { page-break-inside: avoid; display: block; }
 
   /* header / footer (also used by Frappe for every PDF page) */
   #header-html table, #footer-html table { width: 100%; border-collapse: collapse; }
@@ -281,12 +281,43 @@
   {#- skip empty image placeholders that came from a template -#}
   {%- if not (b.block_type == "Image" and not b.image) -%}{%- set _ = blocks.append(b) -%}{%- endif -%}
 {%- endfor -%}
-{%- set ns = namespace(h=0, s=0, fig=0, cols=2, size="", cell=0, tcols=3, gcount=0, t_exp=true, t_val=true, info_done=false) -%}
+{%- set ns = namespace(h=0, s=0, fig=0, cols=2, size="", cell=0, tcols=3, gcount=0, t_exp=true, t_val=true, info_done=false, keep_open=false) -%}
 
 {%- for b in blocks -%}
   {%- set prev = blocks[loop.index0 - 1].block_type if not loop.first else None -%}
   {%- set nxt = blocks[loop.index0 + 1].block_type if not loop.last else None -%}
   {%- set t = b.block_type -%}
+
+  {#- Keep a section together on one page: a heading / sub heading with its text, tables and photos
+      is wrapped in <div class="keep"> (no page break inside) when it is short enough to fit on a page.
+      Long sections (e.g. 10+ photos) are not wrapped and break normally. -#}
+  {%- if t in ["Heading", "Sub Heading", "Page Break"] and not (t == "Sub Heading" and prev == "Heading") -%}
+    {%- if ns.keep_open %}</div>{% set ns.keep_open = false %}{% endif -%}
+    {%- if t != "Page Break" -%}
+      {%- set est = namespace(mm=(12 if t == "Heading" else 9), stop=false, skip_sub=(t == "Heading"), icols=2, isize="Medium") -%}
+      {%- for x in blocks[loop.index0 + 1:] -%}
+        {%- if not est.stop -%}
+          {%- set xt = x.block_type -%}
+          {%- if xt == "Sub Heading" and est.skip_sub -%}{%- set est.mm = est.mm + 9 -%}{%- set est.skip_sub = false -%}
+          {%- elif xt in ["Heading", "Sub Heading", "Page Break"] -%}{%- set est.stop = true -%}
+          {%- else -%}
+            {%- set est.skip_sub = false -%}
+            {%- if xt == "Text" -%}
+              {%- set est.mm = est.mm + 5 + ((x.content or "")|striptags|length / 100)|round(0, "ceil") * 5 + (x.content or "").count("<li") * 1.5 -%}
+            {%- elif xt == "Image" -%}
+              {%- set c = (x.columns or est.icols)|int -%}{%- set c = c if c in [1, 2, 3] else 2 -%}
+              {%- set z = x.image_height if x.image_height in ["Small", "Medium", "Large"] else "Medium" -%}
+              {%- set hh = {1: {"Small": 55, "Medium": 75, "Large": 100}, 2: {"Small": 38, "Medium": 52, "Large": 70}, 3: {"Small": 30, "Medium": 40, "Large": 52}}[c][z] -%}
+              {%- set est.mm = est.mm + (hh + 10) / c -%}
+            {%- elif xt == "Info Table" -%}{%- set est.mm = est.mm + 7 * (rows|length) + 6 -%}
+            {%- else -%}{%- set est.mm = est.mm + 7.5 -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if est.mm < 225 %}<div class="keep">{% set ns.keep_open = true %}{% endif -%}
+    {%- endif -%}
+  {%- endif -%}
 
   {%- if t == "Heading" -%}
     {%- if not b.no_number %}{% set ns.h = ns.h + 1 %}{% set ns.s = 0 %}{% endif -%}
@@ -322,6 +353,22 @@
     {%- endif -%}
     {%- set cells = [b.title, b.value, b.expected, b.col4] -%}
     <tr>{% for i in range(ns.tcols) %}<td>{{ nl2br(cells[i]) }}</td>{% endfor %}</tr>
+    {%- if nxt != t %}</tbody></table>{% endif -%}
+
+  {%- elif t == "Options Row" -%}
+    {#- item + a set of tick boxes; the ticked options are listed in Value (comma separated) -#}
+    {%- if prev != t %}<table class="grid"><thead>{{ heads(b, ["Item", "Status"], S_TH) }}</thead><tbody>{% endif -%}
+    {%- set picked = [] -%}
+    {%- for x in (b.value or "").replace("\n", ",").split(",") %}{% if x.strip() %}{% set _ = picked.append(x.strip()|lower) %}{% endif %}{% endfor -%}
+    <tr><td style="width:32%; vertical-align:middle"><b>{{ nl2br(b.title) }}</b></td>
+        <td class="opts">
+        {%- for o in (b.choices or "").replace("\n", ",").split(",") -%}
+          {%- if o.strip() -%}
+            {%- set on = (o.strip()|lower) in picked -%}
+            <span class="opt"><span class="cb{% if on %} on{% endif %}">{% if on %}<span class="tk"></span>{% endif %}</span>{{ o.strip()|e }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+        </td></tr>
     {%- if nxt != t %}</tbody></table>{% endif -%}
 
   {%- elif t == "Checklist Row" -%}
@@ -405,6 +452,7 @@
     <div class="page-break"></div>
   {%- endif -%}
 {%- endfor %}
+{%- if ns.keep_open %}</div>{% endif %}
 
 {#- ------------------------------------------------------------------
     6. Sign-off
@@ -449,12 +497,12 @@
   {%- if HF.show_page_numbers %}
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; border-top:1.5px solid {{ PC }}; font-family:Arial, Helvetica, sans-serif;">
     <tr>
-      <td style="padding-top:1.5mm; font-size:8pt; color:#555; text-align:left;">
+      <td style="padding-top:1mm; font-size:7pt; color:#555; text-align:left;">
         {%- if HF.company_name %}<b style="color:{{ PC }};">{{ HF.company_name|e }}</b>&nbsp;&nbsp;|&nbsp;&nbsp;{% endif -%}
         {{ title|e }}&nbsp;&nbsp;|&nbsp;&nbsp;{{ report_no|e }}
       </td>
-      <td style="padding-top:1.5mm; font-size:8pt; text-align:right; white-space:nowrap;">
-        <span style="background:{{ PC }}; color:#ffffff; padding:0.6mm 2.5mm; border-radius:2mm; -webkit-print-color-adjust:exact; print-color-adjust:exact;">Page <span class="page"></span> of <span class="topage"></span></span>
+      <td style="padding-top:1mm; font-size:7pt; text-align:right; white-space:nowrap;">
+        <span style="background:{{ PC }}; color:#ffffff; padding:0.3mm 2mm; border-radius:1.5mm; -webkit-print-color-adjust:exact; print-color-adjust:exact;">Page <span class="page"></span> of <span class="topage"></span></span>
       </td>
     </tr>
   </table>

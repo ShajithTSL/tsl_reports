@@ -3,7 +3,7 @@
 
 const TR_TEMPLATE = "Technical Report Template";
 const TR_BLOCK_FIELDS = ["block_type", "title", "content", "value", "expected", "status",
-	"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from"];
+	"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from", "choices"];
 const TR_CUSTOMER_FIELDS = ["customer", "client", "customer_name", "client_name"];
 
 const tr = {
@@ -263,7 +263,7 @@ frappe.ui.form.on("Technical Report Block", {
 		const row = locals[cdt][cdn];
 		const prev = rows[rows.length - 2];
 		// a new row after an image/checklist/test row continues that group by default
-		if (prev && ["Image", "Checklist Row", "Test Row", "Key-Value", "Table Row"].includes(prev.block_type)) {
+		if (prev && ["Image", "Checklist Row", "Test Row", "Key-Value", "Table Row", "Options Row"].includes(prev.block_type)) {
 			frappe.model.set_value(cdt, cdn, "block_type", prev.block_type);
 			if (prev.block_type === "Image") frappe.model.set_value(cdt, cdn, "columns", prev.columns);
 		} else if (!row.block_type) {

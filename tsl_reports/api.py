@@ -292,3 +292,45 @@ def save_header_format(source_name, format_name, customer=None, base_format=None
 			new.append("references", {"label": r.label, "value": r.value})
 	new.insert()
 	return new.name
+
+
+# ----------------------------------------------------------------------------- photo rotation
+@frappe.whitelist()
+def rotate_image(file_url, degrees=90, doctype=None, docname=None):
+	"""Rotate a photo (and fix phone EXIF orientation). Saves a rotated copy and returns its URL,
+	so the editor, previews and PDF all show the same, correctly turned picture."""
+	from io import BytesIO
+
+	from PIL import Image, ImageOps
+
+	frappe.has_permission(TARGET_DOCTYPE, "write", throw=True)
+	degrees = int(degrees) % 360
+	name = frappe.db.get_value("File", {"file_url": file_url}, "name")
+	if not name:
+		frappe.throw(_("File not found: {0}").format(file_url))
+	src = frappe.get_doc("File", name)
+	img = Image.open(BytesIO(src.get_content()))
+	fmt = (img.format or "JPEG").upper()
+	img = ImageOps.exif_transpose(img)  # phones store "rotate me" in EXIF; PDFs ignore it
+	if degrees:
+		img = img.rotate(-degrees, expand=True)  # PIL rotates counter-clockwise
+	if fmt not in ("PNG", "WEBP", "GIF"):
+		fmt = "JPEG"
+		if img.mode not in ("RGB", "L"):
+			img = img.convert("RGB")
+	out = BytesIO()
+	img.save(out, format=fmt, **({"quality": 90} if fmt == "JPEG" else {}))
+
+	base = (src.file_name or "photo").rsplit(".", 1)[0]
+	base = base.split("_rot")[0]
+	ext = {"JPEG": "jpg", "PNG": "png", "WEBP": "webp", "GIF": "gif"}[fmt]
+	new = frappe.get_doc({
+		"doctype": "File",
+		"file_name": f"{base}_rot{frappe.generate_hash(length=6)}.{ext}",
+		"content": out.getvalue(),
+		"is_private": src.is_private,
+		"attached_to_doctype": doctype if docname and not str(docname).startswith("new-") else None,
+		"attached_to_name": docname if docname and not str(docname).startswith("new-") else None,
+	})
+	new.insert(ignore_permissions=True)
+	return new.file_url
