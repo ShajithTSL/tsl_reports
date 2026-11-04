@@ -24,3 +24,6 @@ doctype_list_js = {TARGET_DOCTYPE: "public/js/evaluation_technical_report_list.j
 after_install = "tsl_reports.setup.install.after_install"
 after_migrate = "tsl_reports.setup.install.after_migrate"
 before_uninstall = "tsl_reports.setup.install.before_uninstall"
+
+# Fill the values of "Extra Header Info" / "Header References" rows from the report and its job document
+doc_events = {TARGET_DOCTYPE: {"validate": "tsl_reports.header_fill.on_validate"}}

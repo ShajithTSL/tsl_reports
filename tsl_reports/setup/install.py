@@ -241,7 +241,20 @@ def after_install():
 	install_phrases()
 
 
+def reload_print_format():
+	"""Always copy the app's print format into the database (the PDF uses the database copy on some setups)."""
+	import glob
+
+	from frappe.modules.import_file import import_file_by_path
+
+	base = frappe.get_app_path("tsl_reports", "tsl_reports", "print_format")
+	for path in glob.glob(os.path.join(base, "*", "*.json")):
+		import_file_by_path(path, force=True)
+	frappe.db.commit()
+
+
 def after_migrate():
+	reload_print_format()
 	setup_fields()
 	install_header_formats()
 	# your own templates / header formats / phrases exported with setup.library.export_library

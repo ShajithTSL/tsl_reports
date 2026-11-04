@@ -21,7 +21,7 @@
     "tagline": "", "customer_logo": "", "show_customer_name": 0, "customer_label": "Prepared for",
     "footer_line_1": "UAE-Dubai- Al Qusais Industrial Area 4 - Damascus Street- Warehouse S03 – E-MAIL: INFO-UAE@TSL-ME.COM - TEL: +971 4 287 0082",
     "footer_line_2": "الامارات العربية المتحدة - دبي - القصيص الصناعية 4 – شارع دمشق - مستودع: س 03 – تلفون: ‎+971 4 287 0082‎ – إيميل: INFO-UAE@TSL-ME.COM",
-    "show_page_numbers": 1, "primary_color": "{{ PC }}", "heading_color": "{{ HC }}",
+    "show_page_numbers": 1, "primary_color": "#1F4E79", "heading_color": "#1F3864",
 } -%}
 {%- set hf_name = doc.get("tr_header_format") or frappe.db.get_value("Report Header Format", {"is_default": 1, "disabled": 0}, "name") -%}
 {%- set hf = frappe.get_doc("Report Header Format", hf_name) if hf_name else None -%}
@@ -30,8 +30,13 @@
   {%- set hv = hf.get(k) if hf else None -%}
   {%- set _ = HF.update({k: (hv if hv is not none and hv != "" else v)}) -%}
 {%- endfor -%}
-{%- set PC = HF.primary_color -%}
-{%- set HC = HF.heading_color -%}
+{%- set PC = HF.primary_color or "#1F4E79" -%}
+{%- set HC = HF.heading_color or "#1F3864" -%}
+{#- Inline styles (with !important) so ERPNext's own print styles can never hide our headings -#}
+{%- set PA = "-webkit-print-color-adjust:exact;print-color-adjust:exact;" -%}
+{%- set S_TH = "background:" ~ PC ~ " !important;color:#ffffff !important;font-weight:bold !important;border:1px solid " ~ PC ~ " !important;" ~ PA -%}
+{%- set S_HTH = "background:#eef2f7 !important;color:" ~ HC ~ " !important;font-weight:bold !important;" ~ PA -%}
+{%- set S_H = "color:" ~ HC ~ " !important;font-weight:bold !important;" -%}
 
 {%- set HEADER = [
     ("Report No.",          ["report_no", "report_number", "tr_report_no"]),
@@ -56,14 +61,14 @@
     {%- if h.v is none and doc.get(c) -%}{%- set h.v = doc.get_formatted(c) -%}{%- endif -%}
   {%- endfor -%}
   {%- if h.v -%}
-    {%- set v = (h.v|string).strip().replace("\n", ", ") -%}
+    {%- set v = (h.v|string|striptags).strip().replace("\n", ", ") -%}
     {%- if loop.first -%}{%- set meta_ns.report_no = v -%}{%- endif -%}
     {%- set _ = rows.append({"l": label, "v": v, "full": (v|length) > 42}) -%}
   {%- endif -%}
 {%- endfor -%}
 {%- for r in (doc.get("tr_extra_fields") or []) -%}
   {%- if r.value -%}
-    {%- set v = (r.value|string).strip().replace("\n", ", ") -%}
+    {%- set v = (r.value|string|striptags).strip().replace("\n", ", ") -%}
     {%- set _ = rows.append({"l": r.label, "v": v, "full": r.full_width or (v|length) > 42}) -%}
   {%- endif -%}
 {%- endfor -%}
@@ -95,8 +100,12 @@
 {%- set logo_h = (HF.logo_height or 15)|int -%}
 {%- set name_h = 13 if HF.company_name_ar or HF.tagline else 8 -%}
 {%- set mt = ([logo_h, name_h]|max) + 16 + ref_lines * 5 + (2 if HF.tagline and HF.company_name_ar else 0) -%}
-{%- set foot_lines = (1 if HF.footer_line_1 else 0) + (1 if HF.footer_line_2 else 0) -%}
-{%- set mb = 13 + foot_lines * 7 -%}
+{#- footer shows only "Report | No." and "Page X of Y" (address lines removed) -#}
+{%- set foot_lines = 0 -%}
+{#- wkhtmltopdf drops the footer when it does not fit in the bottom margin – keep room for the page-number line -#}
+
+{%- set mb = (27 if HF.show_page_numbers else 13) + foot_lines * 7 -%}
+
 
 {#- ------------------------------------------------------------------
     3. Macros
@@ -105,16 +114,16 @@
 
 {%- macro boxes(options, value) -%}
   {%- for o in options -%}
-    <span class="opt"><span class="cb{% if value == o %} on{% endif %}"></span>{{ o }}</span>
+    <span class="opt"><span class="cb{% if value == o %} on{% endif %}">{% if value == o %}<span class="tk"></span>{% endif %}</span>{{ o }}</span>
   {%- endfor -%}
 {%- endmacro -%}
 
-{%- macro heads(b, defaults) -%}
+{%- macro heads(b, defaults, sth) -%}
   {%- set custom = (b.col_labels or "").split(",") -%}
   <tr>
   {%- for d in defaults -%}
     {%- set c = custom[loop.index0].strip() if (custom|length > loop.index0 and custom[loop.index0].strip()) else d -%}
-    <th>{{ c|e }}</th>
+    <th style="{{ sth }}">{{ c|e }}</th>
   {%- endfor -%}
   </tr>
 {%- endmacro -%}
@@ -130,7 +139,8 @@
 
   table.hdr { width: 100%; border-collapse: collapse; margin: 0 0 5mm 0; table-layout: fixed; }
   table.hdr th, table.hdr td { border: 1px solid #c8d0dc; padding: 4px 6px; vertical-align: top; font-size: 9.5pt; }
-  table.hdr th { background: #eef2f7; color: {{ HC }}; text-align: left; width: 18%; font-weight: bold; }
+  table.hdr th { background: #eef2f7 !important; color: {{ HC }} !important; text-align: left; width: 18%; font-weight: bold !important;
+                 -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   table.hdr td { width: 32%; }
 
   h2.blk-h { font-size: 12.5pt; color: {{ HC }}; margin: 5mm 0 2mm 0; padding-bottom: 1mm; border-bottom: 1px solid #c8d0dc;
@@ -143,14 +153,20 @@
   .blk-text .ql-editor { padding: 0; }
 
   table.grid { width: 100%; border-collapse: collapse; margin: 1mm 0 3mm 0; }
-  table.grid th { background: {{ PC }}; color: #fff; text-align: left; padding: 5px 6px; font-size: 9pt; border: 1px solid {{ PC }}; }
+  table.grid th { background: {{ PC }} !important; color: #fff !important; text-align: left; padding: 5px 6px; font-size: 9pt;
+                  font-weight: bold !important; border: 1px solid {{ PC }} !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table.grid thead { display: table-header-group; }
   table.grid td { border: 1px solid #c8d0dc; padding: 4px 6px; vertical-align: top; font-size: 9pt; }
   table.grid tr { page-break-inside: avoid; }
   table.grid tr:nth-child(odd) td { background: #f7f9fc; }
   .opt { white-space: nowrap; margin-right: 6px; }
-  .cb { display: inline-block; width: 8px; height: 8px; border: 1px solid #666; margin-right: 3px; vertical-align: -1px; }
-  .cb.on { background: {{ PC }}; border-color: {{ PC }}; }
-  .st-Fail .cb.on { background: #c0392b; border-color: #c0392b; }
+  .cb { display: inline-block; position: relative; width: 9px; height: 9px; border: 1px solid #555; background: #fff;
+        margin-right: 3px; vertical-align: -1px; }
+  /* tick mark drawn with CSS (no special font needed) */
+  .cb .tk { position: absolute; left: 3px; top: -2px; width: 3px; height: 8px; border: solid {{ PC }}; border-width: 0 2px 2px 0;
+            -webkit-transform: rotate(45deg); transform: rotate(45deg); }
+  .st-Fail .cb .tk { border-color: #c0392b; }
+  .st-Pass .cb .tk { border-color: #16835C; }
 
   .figs { margin: 1.5mm 0 2.5mm 0; }
   .figrow { page-break-inside: avoid; margin: 0 auto 1.5mm auto; }
@@ -199,7 +215,7 @@
   {%- macro logo(src) -%}{% if src %}<img src="{{ src }}" style="max-height:{{ logo_h }}mm; max-width:100%">{% endif %}{%- endmacro -%}
   {%- macro names(align, compact=false) -%}
     <div class="hd-name{% if compact %} compact{% endif %}" style="text-align:{{ align }}">
-      {%- if HF.company_name %}<div class="en">{{ HF.company_name|e }}</div>{% endif -%}
+      {%- if HF.company_name %}<div class="en" style="font-size:12pt">{{ HF.company_name|e }}</div>{% endif -%}
       {%- if HF.company_name_ar %}<div class="ar">{{ HF.company_name_ar|e }}</div>{% endif -%}
       {%- if HF.tagline %}<div class="tag">{{ HF.tagline|e }}</div>{% endif -%}
     </div>
@@ -231,25 +247,31 @@
     4. Title + header table
     ------------------------------------------------------------------ -#}
 <div class="tr-title">
-  <h1>{{ title|e }}</h1>
+  <h1 style="{{ S_H }}">{{ title|e }}</h1>
   {%- if doc.get("tr_report_subtitle") %}<div class="sub">{{ doc.tr_report_subtitle|e }}</div>{% endif %}
 </div>
 
+{#- The report-details table. Printed here at the top, unless the report has an
+    "Info Table" block – then it is printed where that block is (e.g. under a "General Information" heading). -#}
+{%- set info_html -%}
 {%- if rows %}
 <table class="hdr">
   {%- set p = namespace(open=false) -%}
   {%- for r in rows -%}
     {%- if two_col and not r.full -%}
-      {%- if not p.open -%}<tr><th>{{ r.l|e }}</th><td>{{ r.v|e }}</td>{%- set p.open = true -%}
-      {%- else -%}<th>{{ r.l|e }}</th><td>{{ r.v|e }}</td></tr>{%- set p.open = false -%}{%- endif -%}
+      {%- if not p.open -%}<tr><th style="{{ S_HTH }}">{{ r.l|e }}</th><td>{{ r.v|e }}</td>{%- set p.open = true -%}
+      {%- else -%}<th style="{{ S_HTH }}">{{ r.l|e }}</th><td>{{ r.v|e }}</td></tr>{%- set p.open = false -%}{%- endif -%}
     {%- else -%}
       {%- if p.open -%}<th></th><td></td></tr>{%- set p.open = false -%}{%- endif -%}
-      <tr><th>{{ r.l|e }}</th><td colspan="3">{{ r.v|e }}</td></tr>
+      <tr><th style="{{ S_HTH }}">{{ r.l|e }}</th><td colspan="3">{{ r.v|e }}</td></tr>
     {%- endif -%}
   {%- endfor -%}
   {%- if p.open -%}<th></th><td></td></tr>{%- endif -%}
 </table>
 {%- endif %}
+{%- endset -%}
+{%- set info_in_body = (doc.get("tr_blocks") or [])|selectattr("block_type", "equalto", "Info Table")|list|length > 0 -%}
+{%- if not info_in_body %}{{ info_html }}{% endif %}
 
 {#- ------------------------------------------------------------------
     5. Blocks – consecutive rows of the same table type are grouped
@@ -259,7 +281,7 @@
   {#- skip empty image placeholders that came from a template -#}
   {%- if not (b.block_type == "Image" and not b.image) -%}{%- set _ = blocks.append(b) -%}{%- endif -%}
 {%- endfor -%}
-{%- set ns = namespace(h=0, s=0, fig=0, cols=2, size="", cell=0, tcols=3, gcount=0) -%}
+{%- set ns = namespace(h=0, s=0, fig=0, cols=2, size="", cell=0, tcols=3, gcount=0, t_exp=true, t_val=true, info_done=false) -%}
 
 {%- for b in blocks -%}
   {%- set prev = blocks[loop.index0 - 1].block_type if not loop.first else None -%}
@@ -268,27 +290,34 @@
 
   {%- if t == "Heading" -%}
     {%- if not b.no_number %}{% set ns.h = ns.h + 1 %}{% set ns.s = 0 %}{% endif -%}
-    <h2 class="blk-h">{% if not b.no_number %}{{ ns.h }}. {% endif %}{{ b.title|e }}</h2>
+    <h2 class="blk-h" style="{{ S_H }}">{% if not b.no_number %}{{ ns.h }}. {% endif %}{{ b.title|e }}</h2>
 
   {%- elif t == "Sub Heading" -%}
     {%- if not b.no_number %}{% set ns.s = ns.s + 1 %}{% endif -%}
-    <h3 class="blk-sh">{% if not b.no_number %}{{ ns.h }}.{{ ns.s }} {% endif %}{{ b.title|e }}</h3>
+    <h3 class="blk-sh" style="{{ S_H }}">{% if not b.no_number %}{{ ns.h }}.{{ ns.s }} {% endif %}{{ b.title|e }}</h3>
 
   {%- elif t == "Text" -%}
     <div class="blk-text">{{ b.content or "" }}</div>
 
   {%- elif t == "Key-Value" -%}
-    {%- if prev != t %}<table class="grid"><thead>{{ heads(b, ["Item", "Details"]) }}</thead><tbody>{% endif -%}
+    {%- if prev != t %}<table class="grid"><thead>{{ heads(b, ["Item", "Details"], S_TH) }}</thead><tbody>{% endif -%}
     <tr><td style="width:45%">{{ nl2br(b.title) }}</td><td>{{ nl2br(b.value) }}</td></tr>
     {%- if nxt != t %}</tbody></table>{% endif -%}
 
   {%- elif t == "Table Row" -%}
     {%- if prev != t -%}
+      {#- headers: first row of the table that has column headers (any row of this table), else defaults -#}
+      {%- set lb = namespace(src="", stop=false) -%}
+      {%- for x in blocks[loop.index0:] -%}
+        {%- if not lb.stop -%}
+          {%- if x.block_type != t %}{% set lb.stop = true %}{% elif x.col_labels and not lb.src %}{% set lb.src = x.col_labels %}{% endif -%}
+        {%- endif -%}
+      {%- endfor -%}
       {%- set labels = [] -%}
-      {%- for x in (b.col_labels or "").split(",") %}{% if x.strip() %}{% set _ = labels.append(x.strip()) %}{% endif %}{% endfor -%}
+      {%- for x in (lb.src or "Item, Details, Remarks").split(",") %}{% if x.strip() %}{% set _ = labels.append(x.strip()) %}{% endif %}{% endfor -%}
       {%- set ns.tcols = ([[labels|length, 2]|max, 4]|min) if labels else 3 -%}
       <table class="grid"><thead><tr>
-      {%- for i in range(ns.tcols) %}<th>{{ (labels[i] if labels|length > i else "")|e }}</th>{% endfor -%}
+      {%- for i in range(ns.tcols) %}<th style="{{ S_TH }}">{{ (labels[i] if labels|length > i else "")|e }}</th>{% endfor -%}
       </tr></thead><tbody>
     {%- endif -%}
     {%- set cells = [b.title, b.value, b.expected, b.col4] -%}
@@ -296,18 +325,42 @@
     {%- if nxt != t %}</tbody></table>{% endif -%}
 
   {%- elif t == "Checklist Row" -%}
-    {%- if prev != t %}<table class="grid"><thead>{{ heads(b, ["Step", "Status", "Notes / Observations"]) }}</thead><tbody>{% endif -%}
+    {%- if prev != t %}<table class="grid"><thead>{{ heads(b, ["Step", "Status", "Notes / Observations"], S_TH) }}</thead><tbody>{% endif -%}
     <tr><td style="width:46%">{{ nl2br(b.title) }}</td>
         <td style="width:17%">{{ boxes(["Done", "N/A"], b.status) }}</td>
         <td>{{ nl2br(b.value) }}</td></tr>
     {%- if nxt != t %}</tbody></table>{% endif -%}
 
   {%- elif t == "Test Row" -%}
-    {%- if prev != t %}<table class="grid"><thead>{{ heads(b, ["Test / Verification", "Expected Result", "Actual Result / Reading", "Pass / Fail"]) }}</thead><tbody>{% endif -%}
-    <tr class="st-{{ b.status or '' }}"><td style="width:30%">{{ nl2br(b.title) }}</td>
-        <td style="width:24%">{{ b.expected|e if b.expected else "" }}</td>
-        <td>{{ nl2br(b.value) }}</td>
-        <td style="width:17%">{{ boxes(["Pass", "Fail"], b.status) }}</td></tr>
+    {#- Expected / Actual columns are printed only if at least one row of this table has a value in them -#}
+    {%- if prev != t -%}
+      {%- set tg = namespace(exp=false, val=false, stop=false) -%}
+      {%- for x in blocks[loop.index0:] -%}
+        {%- if not tg.stop -%}
+          {%- if x.block_type != t %}{% set tg.stop = true %}{% else -%}
+            {%- if (x.expected or "")|trim %}{% set tg.exp = true %}{% endif -%}
+            {%- if (x.value or "")|trim %}{% set tg.val = true %}{% endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- set ns.t_exp = tg.exp -%}
+      {%- set ns.t_val = tg.val -%}
+      {%- set custom = (b.col_labels or "").split(",") -%}
+      {%- set defs = ["Test / Verification", "Expected Result", "Actual Result / Reading", "Pass / Fail / N/A"] -%}
+      {%- set show = [true, tg.exp, tg.val, true] -%}
+      <table class="grid"><thead><tr>
+      {%- for d in defs -%}
+        {%- if show[loop.index0] -%}
+          {%- set c = custom[loop.index0].strip() if (custom|length > loop.index0 and custom[loop.index0].strip()) else d -%}
+          <th style="{{ S_TH }}">{{ c|e }}</th>
+        {%- endif -%}
+      {%- endfor -%}
+      </tr></thead><tbody>
+    {%- endif -%}
+    <tr class="st-{{ b.status or '' }}"><td>{{ nl2br(b.title) }}</td>
+        {%- if ns.t_exp %}<td style="width:24%">{{ b.expected|e if b.expected else "" }}</td>{% endif -%}
+        {%- if ns.t_val %}<td style="width:24%">{{ nl2br(b.value) }}</td>{% endif -%}
+        <td style="width:{{ 24 if (ns.t_exp or ns.t_val) else 30 }}%; white-space:nowrap">{{ boxes(["Pass", "Fail", "N/A"], b.status) }}</td></tr>
     {%- if nxt != t %}</tbody></table>{% endif -%}
 
   {%- elif t == "Image" -%}
@@ -345,6 +398,9 @@
     {%- endif -%}
     {%- if nxt != t -%}</div>{%- endif -%}
 
+  {%- elif t == "Info Table" -%}
+    {%- if not ns.info_done %}{{ info_html }}{% set ns.info_done = true %}{% endif -%}
+
   {%- elif t == "Page Break" -%}
     <div class="page-break"></div>
   {%- endif -%}
@@ -357,7 +413,7 @@
 {%- if signers or doc.get("tr_signoff_note") %}
 <div class="signoff">
   {%- set ns.h = ns.h + 1 %}
-  <h2 class="blk-h">{{ ns.h }}. Authorization &amp; Sign-Off</h2>
+  <h2 class="blk-h" style="{{ S_H }}">{{ ns.h }}. Authorization &amp; Sign-Off</h2>
   {%- if doc.get("tr_signoff_note") %}<div class="note">{{ nl2br(doc.tr_signoff_note) }}</div>{% endif %}
   {%- if signers|length <= 3 %}
   <table class="sig"><tr>
@@ -374,7 +430,7 @@
     {%- endfor %}
   </tr></table>
   {%- else %}
-  <table class="grid"><thead><tr><th>Role</th><th>Name</th><th>Signature</th><th>Date</th></tr></thead><tbody>
+  <table class="grid"><thead><tr><th style="{{ S_TH }}">Role</th><th style="{{ S_TH }}">Name</th><th style="{{ S_TH }}">Signature</th><th style="{{ S_TH }}">Date</th></tr></thead><tbody>
     {%- for s in signers %}
     <tr><td>{{ s.role|e }}</td><td>{{ (s.full_name or "")|e }}{% if s.designation %}<br><span class="small">{{ s.designation|e }}</span>{% endif %}</td>
         <td class="sigimg">{% if s.signature %}<img src="{{ s.signature }}">{% endif %}</td>
@@ -390,12 +446,17 @@
 {%- endif %}
 
 <div id="footer-html">
-  <div class="ft">
-    {%- if HF.show_page_numbers %}
-    <table width="100%"><tr>
-      <td class="pg">{{ title|e }} | {{ report_no|e }}</td>
-      <td class="pg" style="text-align:right">Page <span class="page"></span> of <span class="topage"></span></td>
-    </tr></table>
-    {%- endif %}
-  </div>
+  {%- if HF.show_page_numbers %}
+  <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; border-top:1.5px solid {{ PC }}; font-family:Arial, Helvetica, sans-serif;">
+    <tr>
+      <td style="padding-top:1.5mm; font-size:8pt; color:#555; text-align:left;">
+        {%- if HF.company_name %}<b style="color:{{ PC }};">{{ HF.company_name|e }}</b>&nbsp;&nbsp;|&nbsp;&nbsp;{% endif -%}
+        {{ title|e }}&nbsp;&nbsp;|&nbsp;&nbsp;{{ report_no|e }}
+      </td>
+      <td style="padding-top:1.5mm; font-size:8pt; text-align:right; white-space:nowrap;">
+        <span style="background:{{ PC }}; color:#ffffff; padding:0.6mm 2.5mm; border-radius:2mm; -webkit-print-color-adjust:exact; print-color-adjust:exact;">Page <span class="page"></span> of <span class="topage"></span></span>
+      </td>
+    </tr>
+  </table>
+  {%- endif %}
 </div>

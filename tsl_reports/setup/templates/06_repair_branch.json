@@ -24,6 +24,13 @@
  ],
  "blocks": [
   {
+   "block_type": "Heading",
+   "title": "General Information"
+  },
+  {
+   "block_type": "Info Table"
+  },
+  {
    "block_type": "Image",
    "title": "Item Photo",
    "columns": "1",

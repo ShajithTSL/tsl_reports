@@ -22,6 +22,7 @@ frappe.provide("tsl_reports");
 		"Test Row":      { label: __("Test result"), short: "Test", color: "#7A3E9D" },
 		"Key-Value":     { label: __("2-column row"), short: "Row",  color: "#A23B5A" },
 		"Table Row":     { label: __("Table (3–4 columns)"), short: "Table", color: "#B5651D" },
+		"Info Table":    { label: __("Info table"),  short: "Info",  color: "#0E7490" },
 		"Page Break":    { label: __("Page break"),  short: "Break", color: "#888" },
 	};
 
@@ -102,6 +103,14 @@ frappe.provide("tsl_reports");
 .tre-tpl:hover { border-color:var(--primary, #2490ef); }
 .tre-tpl small { display:block; color:var(--text-muted); }
 .tre-count { font-size:11px; color:var(--text-muted); }
+.tre-info table { width:100%; border-collapse:collapse; font-size:12px; }
+.tre-info th, .tre-info td { border:1px solid var(--border-color); padding:3px 6px; text-align:left; }
+.tre-info th { width:38%; background:var(--subtle-fg, #f7f9fa); font-weight:600; }
+.tre-info td, .tre-info th { padding:1px 4px; vertical-align:middle; }
+.tre-info td.act { width:28px; border:none; }
+.tre-info tr.sep td { border:none; border-top:2px solid var(--border-color); padding:0; height:4px; }
+.tre-info .tre-in { padding:3px 4px; }
+.tre-info .form-control { height:26px; padding:2px 6px; font-size:12px; }
 .tre-gap.tight { height:0; }
 .tre-gap.tight .tre-plus { top:-9px; }
 @media (max-width: 600px) {
@@ -173,6 +182,87 @@ frappe.provide("tsl_reports");
 				btn(this.show_preview ? __("Hide Preview") : __("Live Preview"), this.show_preview ? "btn-primary" : "btn-default", () => this.toggle_preview());
 				btn(__("PDF Preview"), "btn-default", () => this.pdf_preview(), __("Shows the exact PDF, including unsaved changes"));
 			}
+		}
+
+		info_rows() {
+			// rows of the report-details table: report fields (by common names) + Extra Header Info
+			const doc = this.frm.doc, out = [];
+			const meta = frappe.get_meta ? frappe.get_meta(doc.doctype) : null;
+			const getdf = (fn) => (meta && (meta.fields || []).find((f) => f.fieldname === fn)) || (this.frm.fields_dict[fn] || {}).df;
+			const pick = (label, cands) => {
+				const fn = cands.find((c) => doc[c]) || cands.find((c) => getdf(c));
+				if (!fn) return;
+				const df = getdf(fn);
+				if (!df) return;
+				out.push({ kind: "field", label: df.label || label, field: fn, df });
+			};
+			pick("Report No.", ["report_no", "report_number", "tr_report_no"]);
+			pick("Reference / Job No.", ["job_no", "job_number", "reference_no", "reference", "job_card", "work_order"]);
+			pick("Date Received", ["date_received", "received_date", "receiving_date"]);
+			pick("Report Date", ["report_date", "inspection_date", "posting_date", "date"]);
+			pick("Client Name", ["customer_name", "client_name", "customer", "client"]);
+			pick("Equipment Type", ["equipment_type", "equipment", "item_group"]);
+			pick("Manufacturer", ["manufacturer", "make", "brand"]);
+			pick("Model / Part No.", ["model", "model_no", "model_number", "part_no", "item_code"]);
+			pick("Serial No.", ["serial_no", "serial_number", "serial_nos"]);
+			(doc.tr_extra_fields || []).forEach((r) => out.push({ kind: "extra", label: r.label, row: r }));
+			return out;
+		}
+
+		render_info($b) {
+			// editable report-details table: report fields write to the form, extra rows to Extra Header Info
+			const frm = this.frm;
+			const strip = (v) => $("<div>").html(v == null ? "" : String(v)).text().trim();
+			const $w = $(`<div class="tre-info">
+				<div class="tre-meta" style="margin:0 0 4px">${__("Report details table – prints here instead of at the top. Edit values directly; rows below the line are Extra Header Info.")}</div>
+				<table></table>
+				<button class="btn btn-xs btn-default tre-info-add" style="margin-top:4px">+ ${__("Add row")}</button></div>`).appendTo($b);
+			const $t = $w.find("table");
+			const changed = () => { frm.dirty(); if (this.show_preview) this.refresh_preview(); };
+			let sep = false;
+			this.info_rows().forEach((it) => {
+				if (it.kind === "extra" && !sep) { sep = true; $t.append(`<tr class="sep"><td colspan="3"></td></tr>`); }
+				const $tr = $(`<tr><th></th><td></td><td class="act"></td></tr>`).appendTo($t);
+				if (it.kind === "field") {
+					$tr.find("th").text(it.label);
+					const ft = ["Text Editor", "Small Text", "Text", "Long Text", "HTML Editor"].includes(it.df.fieldtype) ? "Data" : it.df.fieldtype;
+					if (["Date", "Link", "Select", "Datetime"].includes(ft) && frappe.ui.form.make_control) {
+						const c = frappe.ui.form.make_control({
+							df: { fieldtype: ft, options: it.df.options, fieldname: "tre_info_" + it.field, label: "" },
+							parent: $tr.find("td").first(), render_input: true, only_input: true,
+						});
+						c.set_value(frm.doc[it.field] || "");
+						c.df.change = () => { const v = c.get_value(); if (v !== frm.doc[it.field]) frm.set_value(it.field, v).then(changed); };
+					} else {
+						const $i = $(`<input class="tre-in">`).val(strip(frm.doc[it.field])).appendTo($tr.find("td").first());
+						$i.on("change", () => frm.set_value(it.field, $i.val()).then(changed));
+					}
+				} else {
+					const r = it.row;
+					const $l = $(`<input class="tre-in" placeholder="${__("Label")}">`).val(r.label || "").appendTo($tr.find("th"));
+					const $v = $(`<input class="tre-in" placeholder="${__("Value")}">`).val(strip(r.value)).appendTo($tr.find("td").first());
+					$l.on("input", () => { r.label = $l.val(); changed(); });
+					$v.on("input", () => { r.value = $v.val(); r.auto_filled = 0; changed(); });
+					$l.add($v).on("change", () => frm.refresh_field("tr_extra_fields"));
+					$(`<button class="btn btn-link btn-xs text-muted" title="${__("Remove")}">✕</button>`).appendTo($tr.find(".act"))
+						.on("click", (e) => {
+							e.preventDefault();
+							frappe.model.clear_doc(r.doctype, r.name);
+							frm.doc.tr_extra_fields = (frm.doc.tr_extra_fields || []).filter((x) => x.name !== r.name);
+							frm.refresh_field("tr_extra_fields");
+							changed();
+							this.render_list();
+						});
+				}
+			});
+			$w.find(".tre-info-add").on("click", (e) => {
+				e.preventDefault();
+				frm.add_child("tr_extra_fields", { label: "", value: "" });
+				frm.refresh_field("tr_extra_fields");
+				changed();
+				this.render_list();
+				this.$list.find(".tre-info tr:last th input").trigger("focus");
+			});
 		}
 
 		has_type(t) { return this.rows().some((r) => r.block_type === t); }
@@ -362,6 +452,9 @@ frappe.provide("tsl_reports");
 				case "Image":
 					this.render_image($b, r, ctx);
 					break;
+				case "Info Table":
+					this.render_info($b);
+					break;
 				case "Page Break":
 					$b.append(`<div class="tre-pb"><span>${__("Page break – next block starts on a new page")}</span></div>`);
 					break;
@@ -460,6 +553,10 @@ frappe.provide("tsl_reports");
 					.on("click", (e) => { e.preventDefault(); this.set_group(r, "image_height", c); this.render_list(); }));
 			}
 			if (!r.image) $meta.append(`<span class="tre-ph">${__("No photo yet – this block is skipped when printing")}</span>`);
+			// optional: take the photo from a field of the report / job document when the template loads
+			const $src = $(`<div class="tre-meta"><span>${__("Take photo from field")}:</span></div>`).appendTo($right);
+			const $in = $(`<input class="tre-in small" style="max-width:240px" placeholder="${__("e.g. image or job.image")}">`).val(r.image_from || "").appendTo($src);
+			$in.on("input", () => this.set(r, "image_from", $in.val().trim()));
 		}
 
 		// --------------------------------------------------------- data ops
@@ -781,7 +878,7 @@ frappe.provide("tsl_reports");
 
 	// ------------------------------------------------------------------ public API
 	tsl_reports.BLOCK_FIELDS = ["block_type", "title", "content", "value", "expected", "status",
-		"image", "columns", "image_height", "col_labels", "no_number", "col4"];
+		"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from"];
 	tsl_reports.BlockEditor = BlockEditor;
 
 	tsl_reports.mount_editor = function (frm, opts) {

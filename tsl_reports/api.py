@@ -153,7 +153,7 @@ def save_as_template(source_name, template_name, report_type=None, customer=None
 		"header_format": src.get("tr_header_format"),
 	})
 	for r in src.get("tr_extra_fields") or []:
-		tpl.append("extra_fields", {"label": r.label, "full_width": r.full_width})  # values blank
+		tpl.append("extra_fields", {"label": r.label, "full_width": r.full_width, "fetch_field": r.get("fetch_field")})  # values blank
 	for r in src.get("tr_blocks") or []:
 		row = _row(r, BLOCK_FIELDS)
 		row.pop("image", None)  # don't carry job photos into a template
@@ -179,6 +179,15 @@ PREVIEW_SHELL = """<!DOCTYPE html><html><head><meta charset="utf-8">
   .print-format {{ margin:0 !important; }}
   @media (max-width: 800px) {{ .sheet {{ padding:6mm; }} }}
 </style></head><body><div class="sheet"><div class="print-format">{body}</div></div></body></html>"""
+
+
+def _fill_header(d):
+	try:
+		from tsl_reports.header_fill import fill
+
+		fill(d)
+	except Exception:
+		frappe.log_error(title="tsl_reports: header auto-fill failed")
 
 
 def _doc_from_client(doc):
@@ -209,6 +218,7 @@ def preview_html(doc):
 	"""Render the (possibly unsaved) report as HTML for the live preview panel.
 	Uses exactly the same pipeline as the PDF (frappe.get_print), so both always show the same content."""
 	d = _doc_from_client(doc)
+	_fill_header(d)
 	try:
 		html = frappe.get_print(TARGET_DOCTYPE, d.name, PRINT_FORMAT, doc=d, no_letterhead=1)
 		if html and "print-format" in html:
@@ -233,6 +243,7 @@ PREVIEW_SCREEN_CSS = """<style>
 def preview_pdf(doc):
 	"""Exact PDF of the (possibly unsaved) report, returned base64-encoded."""
 	d = _doc_from_client(doc)
+	_fill_header(d)
 	try:
 		pdf = frappe.get_print(TARGET_DOCTYPE, d.name, PRINT_FORMAT, doc=d, as_pdf=True, no_letterhead=1)
 	except Exception:

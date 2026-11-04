@@ -1,4 +1,5 @@
 [pre_model_sync]
 
 [post_model_sync]
-tsl_reports.patches.v1_4.branch_template_three_columns
+tsl_reports.patches.v1_9.branch_template_three_columns
+tsl_reports.patches.v1_9.branch_templates_general_information

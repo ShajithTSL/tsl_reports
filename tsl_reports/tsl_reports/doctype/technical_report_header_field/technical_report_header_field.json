@@ -1,7 +1,7 @@
 {
  "actions": [],
  "creation": "2026-10-27 10:00:00.000000",
- "modified": "2026-10-27 10:00:00.000000",
+ "modified": "2026-11-04 10:00:00.000000",
  "owner": "Administrator",
  "modified_by": "Administrator",
  "doctype": "DocType",
@@ -13,7 +13,9 @@
  "field_order": [
   "label",
   "value",
-  "full_width"
+  "fetch_field",
+  "full_width",
+  "auto_filled"
  ],
  "fields": [
   {
@@ -29,7 +31,15 @@
    "fieldtype": "Small Text",
    "label": "Value",
    "in_list_view": 1,
-   "columns": 6
+   "columns": 4
+  },
+  {
+   "fieldname": "fetch_field",
+   "fieldtype": "Data",
+   "label": "Fill From",
+   "in_list_view": 1,
+   "columns": 2,
+   "description": "Optional. Where to take the value from: serial_no (report field) \u00b7 items.serial_no (child table, first row) \u00b7 items[2].serial_no (2nd row) \u00b7 items[*].serial_no (all rows) \u00b7 customer.customer_group (field of the linked document) \u00b7 items.item_code.brand \u00b7 job.plant (linked job document). Leave empty to match the label automatically."
   },
   {
    "fieldname": "full_width",
@@ -37,6 +47,13 @@
    "label": "Full Width",
    "in_list_view": 1,
    "columns": 1
+  },
+  {
+   "fieldname": "auto_filled",
+   "fieldtype": "Check",
+   "label": "Filled Automatically",
+   "hidden": 1,
+   "no_copy": 1
   }
  ],
  "permissions": [],

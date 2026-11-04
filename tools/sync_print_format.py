@@ -4,5 +4,8 @@ d = os.path.join(os.path.dirname(__file__), "..", "tsl_reports", "tsl_reports", 
 j = os.path.join(d, "technical_report_blocks.json")
 data = json.load(open(j))
 data["html"] = open(os.path.join(d, "technical_report_blocks.html")).read()
+# bump "modified" so `bench migrate` copies the new version into the database
+import datetime
+data["modified"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 json.dump(data, open(j, "w"), indent=1, ensure_ascii=False)
 print("synced")

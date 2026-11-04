@@ -3,7 +3,7 @@
 
 const TR_TEMPLATE = "Technical Report Template";
 const TR_BLOCK_FIELDS = ["block_type", "title", "content", "value", "expected", "status",
-	"image", "columns", "image_height", "col_labels", "no_number", "col4"];
+	"image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from"];
 const TR_CUSTOMER_FIELDS = ["customer", "client", "customer_name", "client_name"];
 
 const tr = {
@@ -32,7 +32,7 @@ const tr = {
 			const have = new Set((frm.doc.tr_extra_fields || []).map((r) => (r.label || "").trim().toLowerCase()));
 			(tpl.extra_fields || []).forEach((r) => {
 				if (!have.has((r.label || "").trim().toLowerCase())) {
-					frm.add_child("tr_extra_fields", { label: r.label, value: r.value, full_width: r.full_width });
+					frm.add_child("tr_extra_fields", { label: r.label, value: r.value, full_width: r.full_width, fetch_field: r.fetch_field });
 				}
 			});
 
@@ -51,6 +51,7 @@ const tr = {
 				}));
 			}
 			["tr_extra_fields", "tr_blocks", "tr_signatories"].forEach((f) => frm.refresh_field(f));
+			tr.fill_header(frm);
 			tr.mount(frm);
 			frappe.show_alert({ message: __("Template {0} loaded", [tpl.name]), indicator: "green" });
 		} finally {
@@ -136,6 +137,35 @@ const tr = {
 		}, __("Save Header as Format"), __("Save"));
 	},
 
+	async fill_header(frm, force, quiet) {
+		// fill Extra Header Info / Header References values from the report and its job document
+		const img_slots = (frm.doc.tr_blocks || []).some((b) => b.block_type === "Image" && b.image_from && !b.image);
+		if (!(frm.doc.tr_extra_fields || []).length && !(frm.doc.tr_header_refs || []).length && !img_slots) return;
+		const r = await frappe.call({ method: "tsl_reports.header_fill.fill_values", args: { doc: frm.doc, force: force ? 1 : 0 } });
+		let n = 0;
+		let imgs = 0;
+		((r.message || {}).tr_blocks || []).forEach((x) => {
+			const b = (frm.doc.tr_blocks || []).find((d) => d.name === x.name);
+			if (b && !b.image && x.image) { b.image = x.image; imgs++; }
+		});
+		if (imgs) {
+			frm.dirty();
+			if (frm.__tre) frm.__tre.render();
+			frappe.show_alert({ message: __("{0} photo(s) taken from the report", [imgs]), indicator: "green" });
+		}
+		delete (r.message || {}).tr_blocks;
+		Object.entries(r.message || {}).forEach(([table, rows]) => {
+			rows.forEach((x) => {
+				const row = (frm.doc[table] || []).find((d) => d.name === x.name);
+				if (row && row.value !== x.value) { row.value = x.value; row.auto_filled = 1; n++; }
+			});
+			if (rows.length) frm.refresh_field(table);
+		});
+		if (n && quiet) return; // shown only; saved with the next save
+		if (n) { frm.dirty(); frappe.show_alert({ message: __("{0} header value(s) filled", [n]), indicator: "green" }); }
+		else if (force) frappe.show_alert({ message: __("No matching values found – set 'Fill From' on the row"), indicator: "orange" });
+	},
+
 	mount(frm) {
 		if (!frm.fields_dict.tr_editor) {
 			frm.dashboard.set_headline_alert(
@@ -170,6 +200,8 @@ frappe.ui.form.on("Evaluation - Technical Report", {
 	tr_header_format(frm) { tr.apply_header_format(frm); },
 	customer(frm) { if (frm.is_new()) { frm.set_value("tr_header_format", null).then(() => tr.pick_header_format(frm)); } },
 
+	onload_post_render(frm) { if (!frm.is_new()) tr.fill_header(frm, false, true); },
+
 	tr_source_name(frm) {
 		if (frm.__tr_loading || !frm.doc.tr_source_doctype || !frm.doc.tr_source_name) return;
 		frappe.call({
@@ -181,6 +213,7 @@ frappe.ui.form.on("Evaluation - Technical Report", {
 				if (!frm.doc[k] && v != null && v !== "") { await frm.set_value(k, v); n++; }
 			}
 			if (n) frappe.show_alert({ message: __("{0} fields filled from {1}", [n, frm.doc.tr_source_name]), indicator: "green" });
+			tr.fill_header(frm);
 		});
 	},
 
@@ -196,6 +229,7 @@ frappe.ui.form.on("Evaluation - Technical Report", {
 			() => tsl_reports.open_wizard(frm));
 		if (!(frm.doc.tr_blocks || []).length) wiz.removeClass("btn-default").addClass("btn-primary");
 		frm.add_custom_button(__("Load Template"), () => tr.choose_template(frm), __("Report"));
+		frm.add_custom_button(__("Fill Header Info"), () => tr.fill_header(frm, true), __("Report"));
 		frm.add_custom_button(__("Header Format…"), () => {
 			if (frm.doc.tr_header_format) frappe.set_route("Form", "Report Header Format", frm.doc.tr_header_format);
 			else frappe.new_doc("Report Header Format");
@@ -236,4 +270,14 @@ frappe.ui.form.on("Technical Report Block", {
 			frappe.model.set_value(cdt, cdn, "block_type", "Text");
 		}
 	},
+});
+
+// typing a value by hand stops it from being refilled automatically
+frappe.ui.form.on("Technical Report Header Field", {
+	value(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		if (!frm.__tr_filling) row.auto_filled = 0;
+	},
+	label(frm) { tr.fill_header(frm); },
+	fetch_field(frm) { tr.fill_header(frm); },
 });
