@@ -10,4 +10,4 @@ BLOCK_FIELDS = (
     "image", "columns", "image_height", "col_labels", "no_number", "col4", "image_from", "choices", "allow_break", "status_labels",
 )
 HEADER_FIELDS = ("label", "value", "full_width", "fetch_field")
-SIGNATORY_FIELDS = ("role", "employee", "full_name", "designation", "signature", "company_line")
+SIGNATORY_FIELDS = ("role", "technician", "full_name", "designation", "signature", "company_line")

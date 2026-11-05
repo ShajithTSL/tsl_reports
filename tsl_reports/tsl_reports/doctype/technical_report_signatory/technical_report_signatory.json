@@ -1,7 +1,7 @@
 {
  "actions": [],
  "creation": "2026-10-27 10:00:00.000000",
- "modified": "2026-10-27 10:00:00.000000",
+ "modified": "2026-11-05 16:00:00.000000",
  "owner": "Administrator",
  "modified_by": "Administrator",
  "doctype": "DocType",
@@ -12,7 +12,7 @@
  "editable_grid": 1,
  "field_order": [
   "role",
-  "employee",
+  "technician",
   "full_name",
   "designation",
   "sign_date",
@@ -30,10 +30,10 @@
    "description": "e.g. Inspected By, Verified & Approved By, Lead Technician"
   },
   {
-   "fieldname": "employee",
+   "fieldname": "technician",
    "fieldtype": "Link",
-   "label": "Employee",
-   "options": "Employee",
+   "label": "Technician",
+   "options": "Technician ID",
    "in_list_view": 1,
    "columns": 2
   },
@@ -43,7 +43,7 @@
    "label": "Name",
    "in_list_view": 1,
    "columns": 2,
-   "fetch_from": "employee.employee_name",
+   "fetch_from": "technician.technician_name",
    "fetch_if_empty": 1
   },
   {
@@ -51,9 +51,7 @@
    "fieldtype": "Data",
    "label": "Designation",
    "in_list_view": 1,
-   "columns": 2,
-   "fetch_from": "employee.designation",
-   "fetch_if_empty": 1
+   "columns": 2
   },
   {
    "fieldname": "sign_date",
@@ -72,8 +70,7 @@
   {
    "fieldname": "company_line",
    "fieldtype": "Data",
-   "label": "Company Line",
-   "default": "TSL Electronics Services LLC"
+   "label": "Company Line"
   }
  ],
  "permissions": [],

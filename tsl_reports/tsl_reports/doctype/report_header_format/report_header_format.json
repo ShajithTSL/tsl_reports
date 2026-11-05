@@ -1,7 +1,7 @@
 {
  "actions": [],
  "creation": "2026-10-28 10:00:00.000000",
- "modified": "2026-11-05 12:00:00.000000",
+ "modified": "2026-11-05 15:00:00.000000",
  "owner": "Administrator",
  "modified_by": "Administrator",
  "doctype": "DocType",
@@ -39,6 +39,7 @@
   "footer_line_1",
   "footer_line_2",
   "show_page_numbers",
+  "signoff_position",
   "footer_email",
   "sb_colors",
   "primary_color",
@@ -217,6 +218,14 @@
    "fieldtype": "Check",
    "label": "Show Report No. and Page X of Y",
    "default": "1"
+  },
+  {
+   "fieldname": "signoff_position",
+   "fieldtype": "Select",
+   "label": "Sign-Off Position",
+   "options": "Bottom of last page\nAfter content",
+   "default": "Bottom of last page",
+   "description": "Bottom of last page: signatures sit just above the footer on the last page. After content: right after the last block."
   },
   {
    "fieldname": "footer_email",

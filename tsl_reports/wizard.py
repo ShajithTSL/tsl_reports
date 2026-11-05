@@ -95,7 +95,8 @@ def _employee_row(employee, role):
 		return None
 	e = frappe.db.get_value("Employee", employee, ["name", "employee_name", "designation"], as_dict=True) or {}
 	sig = frappe.db.get_value("Employee", employee, "tr_signature") if frappe.get_meta("Employee").has_field("tr_signature") else None
-	return {"role": role, "employee": employee, "full_name": e.get("employee_name"), "designation": e.get("designation"),
+	# the signatory table links to Technician ID; from the wizard we copy the employee's name / designation
+	return {"role": role, "full_name": e.get("employee_name"), "designation": e.get("designation"),
 			"signature": sig, "sign_date": nowdate(), "company_line": "TSL Electronics Services LLC"}
 
 

@@ -22,8 +22,9 @@
     "footer_line_1": "UAE-Dubai- Al Qusais Industrial Area 4 - Damascus Street- Warehouse S03 – E-MAIL: INFO-UAE@TSL-ME.COM - TEL: +971 4 287 0082",
     "footer_line_2": "الامارات العربية المتحدة - دبي - القصيص الصناعية 4 – شارع دمشق - مستودع: س 03 – تلفون: ‎+971 4 287 0082‎ – إيميل: INFO-UAE@TSL-ME.COM",
     "show_page_numbers": 1, "primary_color": "#1F4E79", "heading_color": "#1F3864",
-    "footer_email": "", "references_align": "Left",
+    "footer_email": "INFO-UAE@TSL-ME.COM", "references_align": "Left",
     "company_name_size": 12, "company_name_ar_size": 10, "name_image": "", "name_image_height": 14,
+    "signoff_position": "Bottom of last page",
 } -%}
 {%- set hf_name = doc.get("tr_header_format") or frappe.db.get_value("Report Header Format", {"is_default": 1, "disabled": 0}, "name") -%}
 {%- set hf = frappe.get_doc("Report Header Format", hf_name) if hf_name else None -%}
@@ -107,6 +108,19 @@
 {%- set foot_lines = 0 -%}
 {#- wkhtmltopdf drops the footer when it does not fit in the bottom margin – keep room for the page-number line -#}
 {%- set mb = (27 if (HF.show_page_numbers or HF.footer_email) else 13) + foot_lines * 7 -%}
+{#- sign-off position: "Bottom of last page" (in the page footer) or "After content" -#}
+{%- set signers0 = doc.get("tr_signatories") or [] -%}
+{%- set sig_bottom = (HF.signoff_position or "Bottom of last page") == "Bottom of last page" and (signers0 or doc.get("tr_signoff_note")) -%}
+{%- if sig_bottom -%}
+  {%- set sg = namespace(img=false, des=false, com=false, dat=false) -%}
+  {%- for x in signers0 -%}
+    {%- if x.signature %}{% set sg.img = true %}{% endif -%}{%- if x.designation %}{% set sg.des = true %}{% endif -%}
+    {%- if x.company_line %}{% set sg.com = true %}{% endif -%}{%- if x.sign_date %}{% set sg.dat = true %}{% endif -%}
+  {%- endfor -%}
+  {%- set note_lines = ((doc.get("tr_signoff_note") or "")|length / 120)|round(0, "ceil")|int -%}
+  {%- set sig_h = 6 + (21 if sg.img else 0) + 5 + (4 if sg.des else 0) + (4 if sg.com else 0) + (4 if sg.dat else 0) + note_lines * 5 + 4 -%}
+  {%- set mb = mb + (sig_h * 1.2)|round(0, "ceil")|int -%}
+{%- endif -%}
 
 {#- ------------------------------------------------------------------
     3. Macros
@@ -187,7 +201,8 @@
   table.phbox img { max-width: 100%; border: 1px solid #ccc; }
   .figcap { font-size: 8pt; font-style: italic; color: {{ PC }}; margin-top: 1mm; line-height: 1.25; }
 
-  .signoff { page-break-inside: avoid; margin-top: 6mm; }
+  .signoff { page-break-inside: avoid; margin-top: 8mm; }
+  #tr-sig-foot .signoff { margin-top: 0; }
   .signoff .note { font-size: 9.5pt; margin-bottom: 4mm; }
   table.sig { width: 100%; table-layout: fixed; border-collapse: collapse; }
   table.sig td { vertical-align: top; text-align: center; padding: 0 4mm; }
@@ -494,18 +509,19 @@
     6. Sign-off
     ------------------------------------------------------------------ -#}
 {%- set signers = doc.get("tr_signatories") or [] -%}
-{%- if signers or doc.get("tr_signoff_note") %}
+{%- macro sigblock() -%}
 <div class="signoff">
-  {%- set ns.h = ns.h + 1 %}
-  <h2 class="blk-h" style="{{ S_H }}">{{ ns.h }}. Authorization &amp; Sign-Off</h2>
   {%- if doc.get("tr_signoff_note") %}<div class="note">{{ nl2br(doc.tr_signoff_note) }}</div>{% endif %}
   {%- if signers|length <= 3 %}
   <table class="sig"><tr>
     {%- for s in signers %}
     <td>
       <div class="role">{{ s.role|e }}</div>
-      <div class="img">{% if s.signature %}<img src="{{ s.signature }}">{% endif %}</div>
+      {#- signature image + line only when there is a signature; otherwise just name and designation -#}
+      {%- if s.signature %}
+      <div class="img"><img src="{{ s.signature }}"></div>
       <div class="line"></div>
+      {%- endif %}
       <div class="name">{{ (s.full_name or "")|e }}</div>
       {%- if s.designation %}<div class="small">{{ s.designation|e }}</div>{% endif %}
       {%- if s.company_line %}<div class="small">{{ s.company_line|e }}</div>{% endif %}
@@ -523,13 +539,26 @@
   </tbody></table>
   {%- endif %}
 </div>
-{%- endif %}
+{%- endmacro -%}
+{%- if (signers or doc.get("tr_signoff_note")) and not sig_bottom %}{{ sigblock() }}{% endif %}
 
 {%- if doc.get("tr_show_end_marker") %}
 <div class="endmark"><b>— END OF REPORT —</b><br>{{ (HF.company_name or '')|e }}</div>
 {%- endif %}
 
 <div id="footer-html">
+  {%- if sig_bottom %}
+  <div id="tr-sig-foot" style="padding-bottom:3mm; font-family:Arial, Helvetica, &quot;DejaVu Sans&quot;, sans-serif; font-size:10pt; color:#222;">{{ sigblock() }}</div>
+  <script>
+    /* sign-off only on the last page: wkhtmltopdf passes ?page=..&topage=.. to the footer */
+    (function () {
+      var q = {}, parts = document.location.search.substring(1).split("&");
+      for (var i = 0; i < parts.length; i++) { var z = parts[i].split("="); q[z[0]] = decodeURIComponent(z[1] || ""); }
+      var el = document.getElementById("tr-sig-foot");
+      if (el && q.page && q.topage && q.page !== q.topage) { el.style.visibility = "hidden"; }
+    })();
+  </script>
+  {%- endif %}
   {%- if HF.show_page_numbers or HF.footer_email %}
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; border-top:1.5px solid {{ PC }}; font-family:Arial, Helvetica, sans-serif;">
     <tr>

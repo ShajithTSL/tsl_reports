@@ -163,7 +163,7 @@ def save_as_template(source_name, template_name, report_type=None, customer=None
 			row.pop("value", None)  # actual readings are job-specific
 		tpl.append("blocks", row)
 	for r in src.get("tr_signatories") or []:
-		tpl.append("signatories", _row(r, ("role", "employee", "full_name", "designation", "company_line")))
+		tpl.append("signatories", _row(r, ("role", "technician", "full_name", "designation", "company_line")))
 	tpl.insert()
 	return tpl.name
 

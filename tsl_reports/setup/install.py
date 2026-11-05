@@ -63,7 +63,7 @@ def report_fields():
 		dict(fieldname="tr_sb_sign", fieldtype="Section Break", label="Sign-Off", collapsible=0),
 		dict(fieldname="tr_signatories", fieldtype="Table", label="Signed By",
 			 options="Technical Report Signatory",
-			 description="Pick the employee: name, designation and signature are filled in automatically."),
+			 description="Pick the technician: the name is filled in automatically."),
 		dict(fieldname="tr_signoff_note", fieldtype="Small Text", label="Sign-Off Statement"),
 
 		# --- 5. Advanced (collapsed)
