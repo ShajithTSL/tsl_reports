@@ -22,7 +22,7 @@
     "footer_line_1": "UAE-Dubai- Al Qusais Industrial Area 4 - Damascus Street- Warehouse S03 – E-MAIL: INFO-UAE@TSL-ME.COM - TEL: +971 4 287 0082",
     "footer_line_2": "الامارات العربية المتحدة - دبي - القصيص الصناعية 4 – شارع دمشق - مستودع: س 03 – تلفون: ‎+971 4 287 0082‎ – إيميل: INFO-UAE@TSL-ME.COM",
     "show_page_numbers": 1, "primary_color": "#1F4E79", "heading_color": "#1F3864",
-    "footer_email": "INFO-UAE@TSL-ME.COM", "references_align": "Left",
+    "footer_email": "", "references_align": "Left",
 } -%}
 {%- set hf_name = doc.get("tr_header_format") or frappe.db.get_value("Report Header Format", {"is_default": 1, "disabled": 0}, "name") -%}
 {%- set hf = frappe.get_doc("Report Header Format", hf_name) if hf_name else None -%}
