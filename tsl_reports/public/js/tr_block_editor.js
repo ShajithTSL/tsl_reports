@@ -390,12 +390,12 @@ frappe.provide("tsl_reports");
 				<div class="trp-title">${__("Start this report")}</div>
 				<div class="trp-sub">${this.template_picker ? __("Pick a template, or let the wizard write it with tick boxes.") : __("Add blocks below.")}</div>
 			</div>`).appendTo($l);
-			if (this.on_wizard) {
-				$(`<div class="trp-wiz"><div class="ic">✨</div>
-					<div><b>${__("Quick Report Wizard")}</b><small>${__("Tick findings, add photos, done")}</small></div>
-					<button class="btn btn-primary btn-xs">${__("Start")}</button></div>`)
-					.appendTo($e).on("click", () => this.on_wizard(this.frm));
-			}
+			// if (this.on_wizard) {
+			// 	$(`<div class="trp-wiz"><div class="ic">✨</div>
+			// 		<div><b>${__("Quick Report Wizard")}</b><small>${__("Tick findings, add photos, done")}</small></div>
+			// 		<button class="btn btn-primary btn-xs">${__("Start")}</button></div>`)
+			// 		.appendTo($e).on("click", () => this.on_wizard(this.frm));
+			// }
 			if (!this.template_picker) return;
 
 			const $hd = $(`<div class="trp-hd"><span class="t"></span><span class="c"></span>
