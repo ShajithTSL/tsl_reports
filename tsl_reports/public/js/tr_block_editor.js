@@ -98,6 +98,27 @@ frappe.provide("tsl_reports");
 .tre-palette button .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
 .tre.files-over .tre-list { outline:2px dashed var(--primary, #2490ef); outline-offset:4px; border-radius:8px; }
 .tre-drophint { font-size:11px; color:var(--text-muted); text-align:center; margin-top:6px; }
+.trp { border:1px solid var(--border-color); border-radius:10px; padding:16px 18px; background:var(--card-bg,#fff); }
+.trp-title { font-weight:700; font-size:15px; }
+.trp-sub { color:var(--text-muted); font-size:12px; margin:2px 0 12px; }
+.trp-wiz { display:flex; align-items:center; gap:12px; border:1px solid var(--primary,#2490ef); background:rgba(36,144,239,.06); border-radius:10px; padding:10px 14px; margin-bottom:14px; cursor:pointer; }
+.trp-wiz .ic { width:32px; height:32px; border-radius:8px; background:var(--primary,#2490ef); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.trp-wiz b { display:block; } .trp-wiz small { color:var(--text-muted); }
+.trp-wiz .btn { margin-left:auto; }
+.trp-hd { display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap; }
+.trp-hd .t { font-weight:600; } .trp-hd .c { color:var(--text-muted); font-size:11px; }
+.trp-hd .trp-search { margin-left:auto; max-width:220px; height:26px; }
+.trp-list { max-height:340px; overflow:auto; }
+.trp-row { display:flex; align-items:center; gap:10px; padding:7px 8px; border-bottom:1px solid var(--border-color); cursor:pointer; border-radius:6px; }
+.trp-row:hover { background:var(--subtle-fg,#f7f9fa); }
+.trp-row .n { font-weight:500; } .trp-row .cu { color:var(--text-muted); font-size:11px; }
+.trp-row .ty { font-size:10.5px; border-radius:9px; padding:1px 8px; background:#eef2f7; color:#1F4E79; white-space:nowrap; }
+.trp-row .ty.w { background:#e7f4ec; color:#16835C; }
+.trp-row .d { margin-left:auto; color:var(--text-muted); font-size:11px; white-space:nowrap; }
+.trp-row .use { color:var(--primary,#2490ef); font-size:12px; font-weight:600; }
+.trp-more { display:inline-block; margin-top:6px; font-size:12px; font-weight:600; color:var(--primary,#2490ef); }
+.trp-none { color:var(--text-muted); padding:10px 8px; font-size:12px; }
+@media (max-width:600px) { .trp-row .cu, .trp-row .d { display:none; } }
 .tre-empty { text-align:center; padding:24px 10px; border:1px dashed var(--border-color); border-radius:10px; }
 .tre-empty h5 { margin-bottom:4px; }
 .tre-tpls { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px; }
@@ -353,24 +374,61 @@ frappe.provide("tsl_reports");
 		}
 
 		render_empty($l) {
-			const $e = $(`<div class="tre-empty">
-				<h5>${__("This report is empty")}</h5>
-				<div class="text-muted small">${__("Use the wizard (tick boxes, almost no typing) or start from a template.")}</div>
-				<div class="tre-tpls"></div></div>`).appendTo($l);
-			if (this.on_wizard) {
-				$(`<div class="tre-tpl" style="border-color:var(--primary,#2490ef);background:rgba(36,144,239,.06)"><b>✨ ${__("Quick Report Wizard")}</b><small>${__("Recommended – tick findings, add photos, done")}</small></div>`)
-					.appendTo($e.find(".tre-tpls")).on("click", () => this.on_wizard(this.frm));
-			}
-			if (!this.template_picker) { $e.find(".tre-tpls").remove(); $e.find(".small").text(__("Add blocks below.")); return; }
-			frappe.db.get_list("Technical Report Template", {
-				fields: ["name", "report_type", "customer"], filters: { disabled: 0 }, limit: 50, order_by: "report_type asc, name asc",
-			}).then((tpls) => {
-				const $t = $e.find(".tre-tpls");
-				tpls.forEach((t) => {
-					$(`<div class="tre-tpl"><b>${esc(t.name)}</b><small>${esc(__(t.report_type))}${t.customer ? " · " + esc(t.customer) : ""}</small></div>`)
-						.appendTo($t).on("click", () => this.on_load_template && this.on_load_template(this.frm, t.name, "Replace"));
+			// Empty report: Quick Report Wizard + the 5 latest templates (the user's own, else Administrator's)
+			const $e = $(`<div class="trp">
+				<div class="trp-title">${__("Start this report")}</div>
+				<div class="trp-sub">${this.template_picker ? __("Pick a template, or let the wizard write it with tick boxes.") : __("Add blocks below.")}</div>
+			</div>`).appendTo($l);
+			// if (this.on_wizard) {
+			// 	$(`<div class="trp-wiz"><div class="ic">✨</div>
+			// 		<div><b>${__("Quick Report Wizard")}</b><small>${__("Tick findings, add photos, done")}</small></div>
+			// 		<button class="btn btn-primary btn-xs">${__("Start")}</button></div>`)
+			// 		.appendTo($e).on("click", () => this.on_wizard(this.frm));
+			// }
+			if (!this.template_picker) return;
+
+			const $hd = $(`<div class="trp-hd"><span class="t"></span><span class="c"></span>
+				<input class="trp-search form-control input-xs" placeholder="${__("Search templates…")}"></div>`).appendTo($e);
+			const $list = $(`<div class="trp-list"></div>`).appendTo($e);
+			const $more = $(`<a class="trp-more" href="#"></a>`).appendTo($e);
+			const when = (d) => {
+				try { return (window.comment_when ? $("<div>").html(comment_when(d)).text() : (window.prettyDate ? prettyDate(d) : String(d).slice(0, 10))) || ""; }
+				catch (e) { return String(d || "").slice(0, 10); }
+			};
+			const state = { all: false, q: "" };
+			const load = () => {
+				Promise.resolve(frappe.call({
+					method: "tsl_reports.api.get_template_list",
+					args: { search: state.q, show_all: state.all ? 1 : 0, limit: 5 },
+				})).then((r) => {
+					r = r || {};
+					const m = r.message || { items: [], total_scope: 0, total_all: 0 };
+					const title = state.q ? __("Search results") : state.all ? __("All templates")
+						: m.scope === "mine" ? __("My templates") : __("Company templates");
+					$hd.find(".t").text(title);
+					$hd.find(".c").text(state.q || state.all ? `${m.items.length}` : __("{0} of {1} · last updated first", [m.items.length, m.total_scope]));
+					$list.empty();
+					if (!m.items.length) $list.append(`<div class="trp-none">${state.q ? __("No template matches “{0}”", [esc(state.q)]) : __("No templates yet")}</div>`);
+					m.items.forEach((t) => {
+						const wc = /completion/i.test(t.report_type || "");
+						$(`<div class="trp-row">
+							<span class="n">${esc(t.name)}</span>
+							<span class="ty ${wc ? "w" : ""}">${esc(__((t.report_type || "").replace(" Report", "")))}</span>
+							${t.customer ? `<span class="cu">${esc(t.customer)}</span>` : ""}
+							<span class="d">${esc(when(t.modified))}</span>
+							<span class="use">${__("Use")}</span></div>`)
+							.appendTo($list)
+							.on("click", () => this.on_load_template && this.on_load_template(this.frm, t.name, "Replace"));
+					});
+					if (state.q) $more.hide();
+					else if (state.all) $more.show().text(__("Show fewer ▴"));
+					else if (m.total_all > m.items.length) $more.show().text(__("Show all {0} templates ▾", [m.total_all]));
+					else $more.hide();
 				});
-			});
+			};
+			$more.on("click", (e) => { e.preventDefault(); state.all = !state.all; load(); });
+			$hd.find(".trp-search").on("input", frappe.utils.debounce((e) => { state.q = e.target.value.trim(); load(); }, 250));
+			load();
 		}
 
 		render_gap($l, index, tight) {

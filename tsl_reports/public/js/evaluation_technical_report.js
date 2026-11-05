@@ -219,14 +219,14 @@ frappe.ui.form.on("Evaluation - Technical Report", {
 
 	refresh(frm) {
 		tr.mount(frm);
-		if (frm.fields_dict.tr_editor) {
-			frm.add_custom_button(__("Edit Report"), () => {
-				const $w = frm.fields_dict.tr_editor.$wrapper;
-				frappe.utils.scroll_to($w, true, 120);
-			}).removeClass("btn-default").addClass("btn-primary");
-		}
-		const wiz = frm.add_custom_button(frm.doc.tr_wizard_data ? __("Edit with Wizard") : __("Quick Report Wizard"),
-			() => tsl_reports.open_wizard(frm));
+		// if (frm.fields_dict.tr_editor) {
+		// 	frm.add_custom_button(__("Edit Report"), () => {
+		// 		const $w = frm.fields_dict.tr_editor.$wrapper;
+		// 		frappe.utils.scroll_to($w, true, 120);
+		// 	}).removeClass("btn-default").addClass("btn-primary");
+		// }
+		// const wiz = frm.add_custom_button(frm.doc.tr_wizard_data ? __("Edit with Wizard") : __("Quick Report Wizard"),
+		// 	() => tsl_reports.open_wizard(frm));
 		if (!(frm.doc.tr_blocks || []).length) wiz.removeClass("btn-default").addClass("btn-primary");
 		frm.add_custom_button(__("Load Template"), () => tr.choose_template(frm), __("Report"));
 		frm.add_custom_button(__("Fill Header Info"), () => tr.fill_header(frm, true), __("Report"));

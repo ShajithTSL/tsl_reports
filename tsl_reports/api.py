@@ -334,3 +334,41 @@ def rotate_image(file_url, degrees=90, doctype=None, docname=None):
 	})
 	new.insert(ignore_permissions=True)
 	return new.file_url
+
+
+# ----------------------------------------------------------------------------- template picker
+@frappe.whitelist()
+def get_template_list(search=None, show_all=0, limit=5):
+	"""Templates for the empty-report picker.
+
+	Default view: the user's own templates (last updated first); if the user has none,
+	the templates created by Administrator. show_all / search: every template.
+	"""
+	frappe.has_permission(TEMPLATE_DOCTYPE, "read", throw=True)
+	fields = ["name", "report_type", "customer", "modified", "owner"]
+	base = {"disabled": 0}
+	user = frappe.session.user
+
+	mine = frappe.db.count(TEMPLATE_DOCTYPE, {**base, "owner": user})
+	scope = "mine" if mine and user != "Administrator" else "company"
+	scope_filters = {**base, "owner": user} if scope == "mine" else {**base, "owner": "Administrator"}
+	total_all = frappe.db.count(TEMPLATE_DOCTYPE, base)
+
+	search = (search or "").strip()
+	if search or int(show_all or 0):
+		or_filters = None
+		if search:
+			like = f"%{search}%"
+			or_filters = [["name", "like", like], ["customer", "like", like], ["report_type", "like", like]]
+		items = frappe.get_all(TEMPLATE_DOCTYPE, filters=base, or_filters=or_filters, fields=fields,
+							   order_by="modified desc", limit_page_length=200)
+		return {"scope": "all", "items": items, "total_scope": len(items), "total_all": total_all}
+
+	items = frappe.get_all(TEMPLATE_DOCTYPE, filters=scope_filters, fields=fields,
+						   order_by="modified desc", limit_page_length=int(limit or 5))
+	if not items and scope == "company":
+		# no Administrator templates either: fall back to the latest of anyone
+		items = frappe.get_all(TEMPLATE_DOCTYPE, filters=base, fields=fields, order_by="modified desc",
+							   limit_page_length=int(limit or 5))
+	return {"scope": scope, "items": items, "total_scope": frappe.db.count(TEMPLATE_DOCTYPE, scope_filters) or len(items),
+			"total_all": total_all}

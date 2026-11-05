@@ -17,7 +17,6 @@ doctype_js = {
 	],
 	"Technical Report Template": ["public/js/tr_block_editor.js"],
 }
-doctype_list_js = {TARGET_DOCTYPE: "public/js/evaluation_technical_report_list.js"}
 
 # Creates the tr_* custom fields on the report DocType + Employee signature field,
 # and installs the starter templates (only if they don't already exist).
