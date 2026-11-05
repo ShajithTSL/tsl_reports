@@ -23,6 +23,7 @@
     "footer_line_2": "الامارات العربية المتحدة - دبي - القصيص الصناعية 4 – شارع دمشق - مستودع: س 03 – تلفون: ‎+971 4 287 0082‎ – إيميل: INFO-UAE@TSL-ME.COM",
     "show_page_numbers": 1, "primary_color": "#1F4E79", "heading_color": "#1F3864",
     "footer_email": "", "references_align": "Left",
+    "company_name_size": 12, "company_name_ar_size": 10, "name_image": "", "name_image_height": 14,
 } -%}
 {%- set hf_name = doc.get("tr_header_format") or frappe.db.get_value("Report Header Format", {"is_default": 1, "disabled": 0}, "name") -%}
 {%- set hf = frappe.get_doc("Report Header Format", hf_name) if hf_name else None -%}
@@ -100,7 +101,7 @@
 {%- for l, v in refs %}{% set chars.n = chars.n + (l|string|length) + (v|string|length) + 6 %}{% endfor -%}
 {%- set ref_lines = ((chars.n / 115)|round(0, "ceil")|int) if refs else 0 -%}
 {%- set logo_h = (HF.logo_height or 15)|int -%}
-{%- set name_h = 13 if HF.company_name_ar or HF.tagline else 8 -%}
+{%- set name_h = ((HF.name_image_height|float or 14)|int + (4 if HF.tagline else 0)) if HF.name_image else (13 if HF.company_name_ar or HF.tagline else 8) -%}
 {%- set mt = ([logo_h, name_h]|max) + 16 + ref_lines * 5 + (2 if HF.tagline and HF.company_name_ar else 0) -%}
 {#- footer shows only "Report | No." and "Page X of Y" (address lines removed) -#}
 {%- set foot_lines = 0 -%}
@@ -226,8 +227,12 @@
   {%- macro logo(src) -%}{% if src %}<img src="{{ src }}" style="max-height:{{ logo_h }}mm; max-width:100%">{% endif %}{%- endmacro -%}
   {%- macro names(align, compact=false) -%}
     <div class="hd-name{% if compact %} compact{% endif %}" style="text-align:{{ align }}">
-      {%- if HF.company_name %}<div class="en" style="font-size:12pt">{{ HF.company_name|e }}</div>{% endif -%}
-      {%- if HF.company_name_ar %}<div class="ar">{{ HF.company_name_ar|e }}</div>{% endif -%}
+      {%- if HF.name_image -%}
+        <img src="{{ HF.name_image }}" style="max-height:{{ HF.name_image_height|float or 14 }}mm; max-width:100%">
+      {%- else -%}
+        {%- if HF.company_name %}<div class="en" style="font-size:{{ HF.company_name_size|float or 12 }}pt; white-space:nowrap">{{ HF.company_name|e }}</div>{% endif -%}
+        {%- if HF.company_name_ar %}<div class="ar" style="font-size:{{ HF.company_name_ar_size|float or 10 }}pt">{{ HF.company_name_ar|e }}</div>{% endif -%}
+      {%- endif -%}
       {%- if HF.tagline %}<div class="tag">{{ HF.tagline|e }}</div>{% endif -%}
     </div>
   {%- endmacro -%}

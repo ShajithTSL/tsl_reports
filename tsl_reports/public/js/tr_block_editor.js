@@ -126,6 +126,12 @@ frappe.provide("tsl_reports");
 .tre-tpl:hover { border-color:var(--primary, #2490ef); }
 .tre-tpl small { display:block; color:var(--text-muted); }
 .tre-count { font-size:11px; color:var(--text-muted); }
+.tre-sel { margin:5px 0 0 2px; width:14px; height:14px; flex-shrink:0; opacity:.35; cursor:pointer; }
+.tre-card:hover .tre-sel, .tre-sel:checked { opacity:1; }
+.tre-card.checked { background:rgba(36,144,239,.07); border-color:var(--primary,#2490ef); }
+.tre-bulk { position:sticky; top:60px; z-index:5; display:flex; align-items:center; gap:10px; padding:7px 12px; margin-bottom:8px;
+            background:#1F4E79; color:#fff; border-radius:8px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+.tre-bulk a { color:#cfe3ff; } .tre-bulk .sp { flex:1; }
 .tre-boxnames { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:4px; font-size:11px; color:var(--text-muted); }
 .tre-boxnames input { max-width:220px; border-color:var(--border-color); font-size:12px; }
 .tre-thumbcol { display:flex; flex-direction:column; align-items:center; gap:3px; flex-shrink:0; }
@@ -173,6 +179,8 @@ frappe.provide("tsl_reports");
 			this.on_choose_template = opts.on_choose_template; // (frm)
 			this.on_wizard = opts.on_wizard; // (frm) – opens the Quick Report Wizard
 			this.selected = null; // row name
+			this.checked = new Set(); // rows ticked for bulk actions
+			this._last_check = null; // for shift-click range selection
 			this.palette_at = null; // index where the inline palette is open
 			this.editing_text = null; // row name with open text editor
 			this.show_preview = false;
@@ -337,6 +345,9 @@ frappe.provide("tsl_reports");
 			const rows = this.rows();
 			const $l = this.$list.empty();
 			this.$layout.find(".tre-bottom").empty();
+			// forget ticks of rows that no longer exist
+			this.checked.forEach((n) => { if (!rows.some((x) => x.name === n)) this.checked.delete(n); });
+			if (this.checked.size) this.render_bulk_bar($l);
 
 			if (!rows.length) {
 				this.render_empty($l);
@@ -379,12 +390,12 @@ frappe.provide("tsl_reports");
 				<div class="trp-title">${__("Start this report")}</div>
 				<div class="trp-sub">${this.template_picker ? __("Pick a template, or let the wizard write it with tick boxes.") : __("Add blocks below.")}</div>
 			</div>`).appendTo($l);
-			// if (this.on_wizard) {
-			// 	$(`<div class="trp-wiz"><div class="ic">✨</div>
-			// 		<div><b>${__("Quick Report Wizard")}</b><small>${__("Tick findings, add photos, done")}</small></div>
-			// 		<button class="btn btn-primary btn-xs">${__("Start")}</button></div>`)
-			// 		.appendTo($e).on("click", () => this.on_wizard(this.frm));
-			// }
+			if (this.on_wizard) {
+				$(`<div class="trp-wiz"><div class="ic">✨</div>
+					<div><b>${__("Quick Report Wizard")}</b><small>${__("Tick findings, add photos, done")}</small></div>
+					<button class="btn btn-primary btn-xs">${__("Start")}</button></div>`)
+					.appendTo($e).on("click", () => this.on_wizard(this.frm));
+			}
 			if (!this.template_picker) return;
 
 			const $hd = $(`<div class="trp-hd"><span class="t"></span><span class="c"></span>
@@ -469,6 +480,7 @@ frappe.provide("tsl_reports");
 			if (["Heading", "Sub Heading"].includes(r.block_type)) classes.push("is-heading");
 
 			const $c = $(`<div class="${classes.join(" ")}" data-name="${esc(r.name)}">
+				<input type="checkbox" class="tre-sel" title="${__("Select (Shift-click to select a range)")}" ${this.checked.has(r.name) ? "checked" : ""}>
 				<div class="tre-handle" draggable="true" title="${__("Drag to reorder")}">⋮⋮</div>
 				<div class="tre-badge" style="background:${d.color}">${esc(d.short)}</div>
 				<div class="tre-body"></div>
@@ -644,6 +656,20 @@ frappe.provide("tsl_reports");
 				if (act === "dup") this.duplicate(r);
 				if (act === "del") this.remove(r);
 			});
+			if (this.checked.has(r.name)) $c.addClass("checked");
+			$c.find(".tre-sel").on("click", (e) => {
+				e.stopPropagation();
+				const rows = this.rows();
+				const on = e.currentTarget.checked;
+				let names = [r.name];
+				if (e.shiftKey && this._last_check) {
+					const a = rows.findIndex((x) => x.name === this._last_check), b = rows.indexOf(r);
+					if (a >= 0) names = rows.slice(Math.min(a, b), Math.max(a, b) + 1).map((x) => x.name);
+				}
+				names.forEach((n) => (on ? this.checked.add(n) : this.checked.delete(n)));
+				this._last_check = r.name;
+				this.render_list();
+			});
 			this.bind_drag($c, r);
 			return $c;
 		}
@@ -767,6 +793,38 @@ frappe.provide("tsl_reports");
 			tsl_reports.BLOCK_FIELDS.forEach((f) => { if (f !== "block_type" && r[f] != null) vals[f] = r[f]; });
 			const nr = this.add(r.block_type, this.rows().indexOf(r) + 1, vals);
 			this.select(nr.name, true);
+		}
+
+		render_bulk_bar($l) {
+			const n = this.checked.size, total = this.rows().length;
+			const $bar = $(`<div class="tre-bulk">
+				<b>${__("{0} selected", [n])}</b>
+				<a href="#" class="all">${n === total ? __("Clear selection") : __("Select all {0}", [total])}</a>
+				<span class="sp"></span>
+				<button class="btn btn-xs btn-danger del">✕ ${__("Delete {0}", [n])}</button>
+				<button class="btn btn-xs btn-default cancel">${__("Cancel")}</button></div>`).appendTo($l);
+			$bar.find(".all").on("click", (e) => {
+				e.preventDefault();
+				if (n === total) this.checked.clear(); else this.rows().forEach((x) => this.checked.add(x.name));
+				this.render_list();
+			});
+			$bar.find(".cancel").on("click", (e) => { e.preventDefault(); this.checked.clear(); this.render_list(); });
+			$bar.find(".del").on("click", (e) => {
+				e.preventDefault();
+				frappe.confirm(__("Delete {0} selected block(s)?", [n]), () => this.remove_many([...this.checked]));
+			});
+		}
+
+		remove_many(names) {
+			const set = new Set(names);
+			this.rows().filter((x) => set.has(x.name)).forEach((x) => frappe.model.clear_doc(x.doctype, x.name));
+			this.frm.doc[this.field] = this.rows().filter((x) => !set.has(x.name));
+			this.renumber();
+			this.checked.clear();
+			if (set.has(this.selected)) this.selected = null;
+			this.frm.dirty();
+			this.after_change(true);
+			frappe.show_alert({ message: __("{0} block(s) deleted", [set.size]), indicator: "green" });
 		}
 
 		remove(r) {
